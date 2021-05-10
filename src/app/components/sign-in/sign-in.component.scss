@@ -1,0 +1,40 @@
+@import "styles/vars";
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  .title {
+    text-align: center;
+  }
+  .full-width {
+    width: 100%;
+  }
+  .btn {
+    margin-top: 20px;
+  }
+  .signup {
+    font-size: 15px;
+    text-align: center;
+    margin-top: 20px;
+    a {
+      text-decoration: none;
+      color: $primary;
+    }
+  }
+  .content-alert {
+    transition: opacity 0.5s ease-in;
+    .alert {
+      text-align: center;
+      font-size: 15px;
+      text-transform: uppercase;
+      padding: 10px;
+      border-radius: 5px;
+      &-error {
+        background-color: rgb(192, 99, 99);
+        color: #fff;
+      }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+@mixin response-to($width) {
+  @media only screen and (max-width: $width) {
+    @content;
+  }
+}

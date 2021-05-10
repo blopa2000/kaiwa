@@ -1,1 +1,77 @@
-<p>sign-in works!</p>
+<mat-card class="card">
+  <h1 class="title">Sign In</h1>
+  <form [formGroup]="form" (ngSubmit)="signIn($event)">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input
+        formControlName="email"
+        matInput
+        placeholder="Email"
+        type="email"
+      />
+      <mat-error
+        *ngIf="
+          form.controls.email.hasError('email') &&
+          !form.controls.email.hasError('required')
+        "
+      >
+        Please enter a valid email address
+      </mat-error>
+      <mat-error *ngIf="form.controls.email.hasError('required')">
+        Email is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Password</mat-label>
+      <input
+        formControlName="password"
+        [type]="hide ? 'password' : 'text'"
+        matInput
+        placeholder="Password"
+        autocomplete="off"
+      />
+      <mat-error *ngIf="form.controls.password.hasError('required')">
+        Password is <strong>required</strong>
+      </mat-error>
+      <mat-error
+        *ngIf="
+          form.controls.password.hasError('minlength') &&
+          !form.controls.password.hasError('required')
+        "
+      >
+        Password minimum length is <strong>8</strong>
+      </mat-error>
+
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="hide = !hide"
+        [attr.aria-label]="'Hide password'"
+        type="button"
+        [attr.aria-pressed]="hide"
+      >
+        <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <button
+      mat-flat-button
+      color="primary"
+      class="full-width btn"
+      type="submit"
+      [disabled]="!form.valid"
+    >
+      Sign in
+    </button>
+  </form>
+  <p class="signup">
+    Don't have an account <a [routerLink]="['/sign-up']">Sign up</a> here.
+  </p>
+
+  <div class="content-alert" [ngStyle]="{ opacity: isSuccess ? '1' : '0' }">
+    <p class="alert alert-error">
+      <strong>INCORRECT EMAIL OR PASSWORD</strong>
+    </p>
+  </div>
+</mat-card>

@@ -1,0 +1,32 @@
+@import "styles/vars";
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  .title {
+    text-align: center;
+  }
+
+  .sign-in {
+    font-size: 15px;
+    text-align: center;
+    margin-top: 20px;
+    a {
+      text-decoration: none;
+      color: $primary;
+    }
+  }
+
+  .card {
+    width: 500px;
+    padding: 30px;
+    box-sizing: border-box;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+}
