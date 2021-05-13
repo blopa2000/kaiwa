@@ -14,6 +14,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 import { CoreModule } from './core/core.module';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [AppComponent, LayoutComponent, PageNotFoundComponent],
@@ -26,6 +27,7 @@ import { CoreModule } from './core/core.module';
     AngularFireAuthModule,
     AngularFirestoreModule,
     CoreModule,
+    FontAwesomeModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -1,0 +1,66 @@
+@import "styles/vars";
+
+:host::ng-deep.mat-button {
+  padding: 0;
+  width: 100%;
+}
+
+:host::ng-deep.mat-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0 !important;
+}
+
+.info {
+  margin-left: 10px;
+  flex: 1;
+  text-align: start;
+}
+
+h3 {
+  margin: 10px 0 0 0;
+  text-transform: capitalize;
+}
+
+span {
+  font-size: 10px;
+  color: #747474;
+}
+
+.lastMessage {
+  margin-bottom: 20px;
+}
+
+.notifications {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.notifications > span {
+  margin: 0;
+  padding: 0 5px 6px 0;
+}
+
+.badge {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: $primary;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.badge > span {
+  margin: 0;
+  color: #fff;
+}
+
+.hidden {
+  visibility: hidden;
+}

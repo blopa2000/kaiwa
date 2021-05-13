@@ -8,12 +8,6 @@ import { UserService } from '@services/user/user.service';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  user: any = {
-    firstName: '',
-    lastName: '',
-    avatar: '',
-  };
-
   constructor(
     private authService: AuthService,
     private usersService: UserService
@@ -23,9 +17,7 @@ export class HomeComponent implements OnInit {
 
   getuser(): void {
     this.authService.verifyUser().subscribe((data) => {
-      this.usersService.getUser(data.uid).subscribe((doc: any) => {
-        this.user = doc;
-      });
+      this.usersService.getUser(data.uid);
     });
   }
 

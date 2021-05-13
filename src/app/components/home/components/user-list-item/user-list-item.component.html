@@ -1,0 +1,24 @@
+<button mat-button (click)="handleClick(user.roomID)">
+  <div class="avatar" #avatar></div>
+
+  <div class="info">
+    <h3>
+      {{ user?.firstName + " " + user?.lastName | chainAdjustment: 15 }}
+    </h3>
+    <span class="lastMessage">{{
+      user.room?.lastMessage | chainAdjustment: 26
+    }}</span>
+  </div>
+
+  <div class="notifications">
+    <span>{{ user?.room?.timestamp?.seconds * 1000 | date }}</span>
+
+    <div
+      *ngIf="myUser?.id !== user.room?.idUser"
+      class="badge"
+      [ngClass]="{ hidden: user.room?.messageSeen }"
+    >
+      <span>{{ user.room?.countMessage }}</span>
+    </div>
+  </div>
+</button>

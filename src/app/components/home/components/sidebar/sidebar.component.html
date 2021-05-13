@@ -1,1 +1,26 @@
-<p>sidebar works!</p>
+<div class="user-info">
+  <div class="avatar" #avatar></div>
+  <div class="title-content">
+    <h3 class="title">
+      {{ user.firstName + " " + user.lastName | chainAdjustment: 26 }}
+    </h3>
+    <span class="subtitle">{{ user.description | chainAdjustment: 24 }}</span>
+  </div>
+  <button mat-icon-button aria-label="settings">
+    <fa-icon [icon]="faEllipsisV"></fa-icon>
+  </button>
+</div>
+
+<div class="l-form">
+  <form action="" class="form">
+    <div class="form__contact-input">
+      <input type="text" class="form__input" />
+      <label class="form__label">search</label>
+    </div>
+  </form>
+</div>
+
+<app-user-list-item
+  *ngFor="let user of listUserItem"
+  [user]="user"
+></app-user-list-item>

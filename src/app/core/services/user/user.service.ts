@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { of } from 'rxjs';
+import { of, BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  id: string = '';
-  contacts: any[] = [];
-  todos: any = [];
+  private user = new BehaviorSubject<any>({});
+  public user$ = this.user.asObservable();
+  public id = '';
 
   constructor(private db: AngularFirestore) {}
 
@@ -22,15 +22,20 @@ export class UserService {
   }
 
   getUser(id: string): any {
-    this.id = id;
-    return this.db.collection('users').doc(id).valueChanges();
+    this.db
+      .collection('users')
+      .doc(id)
+      .valueChanges()
+      .subscribe((doc: any) => {
+        this.user.next({ ...doc, id });
+      });
   }
 
-  getContacts(): any {
-    if (this.id) {
+  getContacts(id: string): any {
+    if (id) {
       return this.db
         .collection('users')
-        .doc(this.id)
+        .doc(id)
         .collection('contacts')
         .valueChanges();
     }

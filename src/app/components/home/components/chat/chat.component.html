@@ -1,0 +1,43 @@
+<div class="container" *ngIf="idRoom === ''">
+  <div class="screen-default">
+    <img src="assets/image/chat.svg" alt="chat" />
+
+    <p>choose a chat and communicate with your contacts</p>
+  </div>
+</div>
+
+<div *ngIf="idRoom !== ''" class="container">
+  <div class="container-message">
+    <div
+      *ngFor="let msg of messages"
+      [ngClass]="msg?.idUser === user?.id ? 'message-my-user' : 'message-user'"
+    >
+      {{ msg.message }}
+    </div>
+  </div>
+
+  <div class="container-form">
+    <div>
+      <div class="form">
+        <div class="form__contact-input">
+          <input
+            class="form__input"
+            placeholder="escribe un mensaje"
+            [formControl]="messageInput"
+          />
+        </div>
+
+        <div class="example-button-container">
+          <button
+            mat-mini-fab
+            color="warn"
+            aria-label="Example icon button with a filter list icon"
+            (click)="handleMessage()"
+          >
+            <mat-icon>filter_list</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
