@@ -3,10 +3,20 @@
 %message {
   padding: 10px;
   max-width: 200px;
-  border-radius: 20px;
+  border-radius: 10px;
   color: #fff;
   font-size: 15px;
   margin-bottom: 10px;
+  position: relative;
+}
+
+%afterMessage {
+  content: "";
+  display: block;
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  top: 0;
 }
 
 :host {
@@ -56,11 +66,23 @@
   .message-user {
     background-color: #131747;
     @extend %message;
+    &::after {
+      @extend %afterMessage;
+      left: -7px;
+      background-color: #131747;
+      clip-path: polygon(100% 0, 0 0, 99% 100%);
+    }
   }
   .message-my-user {
     background-color: $primary;
     margin-left: auto;
     @extend %message;
+    &::after {
+      @extend %afterMessage;
+      right: -7px;
+      background-color: $primary;
+      clip-path: polygon(100% 0, 0 0, 0 100%);
+    }
   }
 
   .container-form {
