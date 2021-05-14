@@ -3,7 +3,7 @@
 %message {
   padding: 10px;
   max-width: 200px;
-  border-radius: 50px;
+  border-radius: 20px;
   color: #fff;
   font-size: 15px;
   margin-bottom: 10px;
@@ -93,5 +93,9 @@
     &__input:focus {
       border: 1px solid $primary;
     }
+  }
+
+  .btn-send-message {
+    font-size: 25px;
   }
 }

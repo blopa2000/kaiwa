@@ -7,7 +7,7 @@
 </div>
 
 <div *ngIf="idRoom !== ''" class="container">
-  <div class="container-message">
+  <div class="container-message" #containerMessage>
     <div
       *ngFor="let msg of messages"
       [ngClass]="msg?.idUser === user?.id ? 'message-my-user' : 'message-user'"
@@ -24,17 +24,18 @@
             class="form__input"
             placeholder="escribe un mensaje"
             [formControl]="messageInput"
+            (keyup.enter)="handleMessage()"
           />
         </div>
 
         <div class="example-button-container">
           <button
-            mat-mini-fab
-            color="warn"
-            aria-label="Example icon button with a filter list icon"
+            mat-icon-button
+            aria-label="papper-plane"
             (click)="handleMessage()"
+            class="btn-send-message"
           >
-            <mat-icon>filter_list</mat-icon>
+            <fa-icon [icon]="faPaperPlane"></fa-icon>
           </button>
         </div>
       </div>

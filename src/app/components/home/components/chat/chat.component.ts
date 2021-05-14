@@ -1,7 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  DoCheck,
+} from '@angular/core';
 import { RoomService } from '@services/room/room.service';
 import { UserService } from '@services/user/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
 import { FormControl, Validators } from '@angular/forms';
 
@@ -10,12 +17,19 @@ import { FormControl, Validators } from '@angular/forms';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss'],
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, DoCheck {
+  @ViewChild('containerMessage', { static: false })
+  private containerMessage: ElementRef;
+
   messages = [];
   count: any = 0;
   user: any = {};
   idRoom: any = '';
+  idUser: string = '';
   messageInput: FormControl;
+
+  //icon
+  faPaperPlane = faPaperPlane;
 
   constructor(
     private roomService: RoomService,
@@ -39,35 +53,48 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  ngDoCheck() {
+    if (this.messages.length > 0) {
+      this.containerMessage.nativeElement.scrollTop =
+        this.containerMessage.nativeElement.scrollHeight;
+    }
+  }
+
   async handleMessage() {
     if (!this.messageInput.hasError('required')) {
-      this.roomService.getCountMessage().subscribe((doc: any) => {
-        this.count = doc.countMessage;
-      });
-      const message = this.messageInput.value;
-      const msg = {
-        message,
-        idUser: this.user.id,
-        timestamp: new Date(),
-      };
-      const lastMessage = {
-        lastMessage: message,
-        idUser: this.user.id,
-        timestamp: new Date(),
-        messageSeen: false,
-        countMessage: this.count + 1,
-      };
       try {
-        await this.roomService.newMessage(msg);
-        await this.roomService.lastMessage(lastMessage);
+        this.roomService.getLastMessage().subscribe((doc: any) => {
+          this.count = doc.countMessage;
+          this.idUser = doc.idUser;
+        });
+
+        const message = this.messageInput.value;
+
         this.messageInput.reset();
+
+        const msg = {
+          message,
+          idUser: this.user.id,
+          timestamp: new Date(),
+        };
+
+        const lastMessage = {
+          lastMessage: message,
+          idUser: this.user.id,
+          timestamp: new Date(),
+          messageSeen: false,
+          countMessage: this.idUser === this.user.id ? this.count + 1 : 1,
+        };
+
+        await this.roomService.newMessage(msg);
+        await this.roomService.updateLastMessage(lastMessage);
       } catch (response: any) {
-        this.openSnackBar(response.message, 'dismiss');
+        this.openSnackBar('Error trying to send the message', 'dismiss');
       }
     }
   }
 
-  openSnackBar(message: string, action: string): void {
+  private openSnackBar(message: string, action: string): void {
     this.snackBar.open(message, action, {
       duration: 5000,
       horizontalPosition: 'right',

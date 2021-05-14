@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -25,8 +26,19 @@ export class RoomService {
     return this.db
       .collection('room')
       .doc(id)
-      .collection('messages', (ref) => ref.orderBy('timestamp', 'asc'))
+      .collection('messages', (ref) =>
+        ref.orderBy('timestamp', 'desc').limit(20)
+      )
       .valueChanges()
+      .pipe(
+        map((messages) => {
+          const chats = [];
+          for (const message of messages) {
+            chats.unshift(message);
+          }
+          return chats;
+        })
+      )
       .subscribe((doc) => {
         this.message.next(doc);
       });
@@ -47,11 +59,11 @@ export class RoomService {
       .add(msg);
   }
 
-  lastMessage(msg: any) {
+  updateLastMessage(msg: any) {
     return this.db.collection('room').doc(this.id).update(msg);
   }
 
-  getCountMessage() {
+  getLastMessage() {
     return this.db.collection('room').doc(this.id).valueChanges();
   }
 }

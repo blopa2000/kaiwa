@@ -14,11 +14,12 @@
     <span>{{ user?.room?.timestamp?.seconds * 1000 | date }}</span>
 
     <div
-      *ngIf="myUser?.id !== user.room?.idUser"
       class="badge"
-      [ngClass]="{ hidden: user.room?.messageSeen }"
+      [ngClass]="{
+        hidden: myUser?.id === user?.room?.idUser || user?.room?.messageSeen
+      }"
     >
-      <span>{{ user.room?.countMessage }}</span>
+      <span>{{ user?.room?.countMessage }}</span>
     </div>
   </div>
 </button>
