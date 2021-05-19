@@ -10,6 +10,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { UserListItemComponent } from './components/user-list-item/user-list-item.component';
 import { ChatComponent } from './components/chat/chat.component';
+import { ContactUserViewComponent } from './components/contact-user-view/contact-user-view.component';
+import { DialogContactComponent } from './components/dialog-contact/dialog-contact.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,8 @@ import { ChatComponent } from './components/chat/chat.component';
     SidebarComponent,
     UserListItemComponent,
     ChatComponent,
+    ContactUserViewComponent,
+    DialogContactComponent,
   ],
   imports: [
     CommonModule,

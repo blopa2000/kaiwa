@@ -39,6 +39,7 @@ export class SidebarComponent implements OnInit {
               this.listUserItem[index] = {
                 ...this.listUserItem[index],
                 ...user,
+                id: contacts[index].user,
               };
             });
 

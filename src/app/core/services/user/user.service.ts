@@ -8,6 +8,9 @@ import { of, BehaviorSubject } from 'rxjs';
 export class UserService {
   private user = new BehaviorSubject<any>({});
   public user$ = this.user.asObservable();
+
+  private userContact = new BehaviorSubject<any>({});
+  public userContact$ = this.userContact.asObservable();
   public id = '';
 
   constructor(private db: AngularFirestore) {}
@@ -18,7 +21,10 @@ export class UserService {
     email: string,
     id: string
   ): void {
-    this.db.collection('users').doc(id).set({ firstName, lastName, email });
+    this.db
+      .collection('users')
+      .doc(id)
+      .set({ firstName, lastName, email, description: 'new to kaiwa :)' });
   }
 
   getUser(id: string): any {
@@ -44,5 +50,15 @@ export class UserService {
 
   getUserContact(id: string): any {
     return this.db.collection('users').doc(id).valueChanges();
+  }
+
+  setUserContact(id: string) {
+    this.db
+      .collection('users')
+      .doc(id)
+      .valueChanges()
+      .subscribe((doc) => {
+        this.userContact.next(doc);
+      });
   }
 }

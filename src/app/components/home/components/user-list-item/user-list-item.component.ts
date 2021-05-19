@@ -38,10 +38,11 @@ export class UserListItemComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {}
 
-  handleClick(id: string): void {
+  handleClick(id: string, userID: string): void {
     if (this.myUser.id !== this.user.room.idUser) {
       this.roomService.messageRead(id);
     }
     this.roomService.getMessage(id);
+    this.userService.setUserContact(userID);
   }
 }
