@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { DialogContactComponent } from './../dialog-contact/dialog-contact.component';
 
 import { UserService } from '@services/user/user.service';
@@ -18,7 +20,8 @@ export class ContactUserViewComponent {
   constructor(
     private userService: UserService,
     private roomService: RoomService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
     this.userService.userContact$.subscribe((doc) => {
       this.user = doc;
@@ -34,13 +37,25 @@ export class ContactUserViewComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.userService.deleteContacts(
-          this.user.idContact,
-          this.user.id,
-          this.idUser
-        );
-        this.roomService.deleteRoom();
+        try {
+          this.userService.deleteContacts(
+            this.user.idContact,
+            this.user.id,
+            this.idUser
+          );
+          this.roomService.deleteRoom();
+        } catch (error) {
+          this.openSnackBar('error trying to delete user', 'dismiss');
+        }
       }
+    });
+  }
+
+  private openSnackBar(message: string, action: string): void {
+    this.snackBar.open(message, action, {
+      duration: 5000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
     });
   }
 }

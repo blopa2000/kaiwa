@@ -29,29 +29,33 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {}
 
   getContacts() {
-    this.listUserItem = [];
     this.usersService.getContacts(this.user.id).subscribe((contacts: any) => {
+      this.listUserItem = [];
       if (contacts !== null) {
         for (let index = 0; index < contacts.length; index++) {
           this.usersService
             .getUserContact(contacts[index].payload.doc.data().user)
             .subscribe((user: any) => {
-              this.listUserItem[index] = {
-                ...this.listUserItem[index],
-                ...user,
-                id: contacts[index].payload.doc.data().user,
-                contactsID: contacts[index].payload.doc.id,
-              };
+              if (user !== undefined) {
+                this.listUserItem[index] = {
+                  ...this.listUserItem[index],
+                  ...user,
+                  id: contacts[index].payload.doc.data().user,
+                  contactsID: contacts[index].payload.doc.id,
+                };
+              }
             });
 
           this.roomService
             .getRoom(contacts[index].payload.doc.data().room)
             .subscribe((room: any) => {
-              this.listUserItem[index] = {
-                ...this.listUserItem[index],
-                room,
-                roomID: contacts[index].payload.doc.data().room,
-              };
+              if (room !== undefined) {
+                this.listUserItem[index] = {
+                  ...this.listUserItem[index],
+                  room,
+                  roomID: contacts[index].payload.doc.data().room,
+                };
+              }
               // this.listUserItem.sort(
               //   (a, b) => b?.room?.timeStamp - a?.room?.timeStamp
               // );
