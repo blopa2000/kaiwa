@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { UserService } from '@services/user/user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogContactComponent } from './../dialog-contact/dialog-contact.component';
+
+import { UserService } from '@services/user/user.service';
+import { RoomService } from '@services/room/room.service';
 
 @Component({
   selector: 'app-contact-user-view',
@@ -11,9 +13,19 @@ import { DialogContactComponent } from './../dialog-contact/dialog-contact.compo
 export class ContactUserViewComponent {
   user: any = undefined;
 
-  constructor(private userService: UserService, public dialog: MatDialog) {
+  idUser: string = '';
+
+  constructor(
+    private userService: UserService,
+    private roomService: RoomService,
+    public dialog: MatDialog
+  ) {
     this.userService.userContact$.subscribe((doc) => {
       this.user = doc;
+    });
+
+    this.userService.user$.subscribe((doc) => {
+      this.idUser = doc.id;
     });
   }
 
@@ -21,7 +33,14 @@ export class ContactUserViewComponent {
     const dialogRef = this.dialog.open(DialogContactComponent);
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+      if (result) {
+        this.userService.deleteContacts(
+          this.user.idContact,
+          this.user.id,
+          this.idUser
+        );
+        this.roomService.deleteRoom();
+      }
     });
   }
 }

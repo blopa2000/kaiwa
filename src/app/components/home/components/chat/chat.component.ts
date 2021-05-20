@@ -64,8 +64,8 @@ export class ChatComponent implements OnInit, DoCheck {
     if (!this.messageInput.hasError('required')) {
       try {
         this.roomService.getLastMessage().subscribe((doc: any) => {
-          this.count = doc.countMessage;
-          this.idUser = doc.idUser;
+          this.count = doc?.countMessage;
+          this.idUser = doc?.idUser;
         });
 
         const message = this.messageInput.value;

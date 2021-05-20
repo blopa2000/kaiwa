@@ -6,7 +6,7 @@
   </div>
 </div>
 
-<div *ngIf="idRoom !== ''" class="container">
+<div [hidden]="idRoom === ''" class="container">
   <div class="container-message" #containerMessage>
     <div
       *ngFor="let msg of messages"

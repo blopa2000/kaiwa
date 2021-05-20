@@ -1,24 +1,24 @@
-<div *ngIf="user?.firstName !== undefined" class="container">
+<div *ngIf="user?.doc !== undefined" class="container">
   <img
     [src]="
-      user?.avatar === undefined
+      user?.doc?.avatar === undefined
         ? 'assets/image/default-user-img.jpg'
-        : user.avatar
+        : user.doc?.avatar
     "
     alt="avatar-user-contact"
     class="avatar avatar-big"
   />
 
-  <h3>{{ user?.firstName + " " + user?.lastName }}</h3>
+  <h3>{{ user?.doc?.firstName + " " + user?.doc?.lastName }}</h3>
 
-  <span>{{ user?.description }}</span>
+  <span>{{ user?.doc?.description }}</span>
 
   <button mat-stroked-button color="warn" (click)="openDialog()">
     Delete user
   </button>
 </div>
 
-<div *ngIf="user?.lastName === undefined" class="container">
+<div *ngIf="user?.doc === undefined" class="container">
   <img src="assets/image/avatar.svg" alt="avatar-default" class="avatar-big" />
   <p>you can see the user you are talking to in this window</p>
 </div>

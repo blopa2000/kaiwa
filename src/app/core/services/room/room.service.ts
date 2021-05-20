@@ -44,7 +44,7 @@ export class RoomService {
       });
   }
 
-  async messageRead(id: string) {
+  messageRead(id: string) {
     this.db.collection('room').doc(id).update({
       messageSeen: true,
       countMessage: 0,
@@ -65,5 +65,22 @@ export class RoomService {
 
   getLastMessage() {
     return this.db.collection('room').doc(this.id).valueChanges();
+  }
+
+  deleteRoom() {
+    this.ID.next('');
+    this.message.next([]);
+
+    this.db
+      .collection('room')
+      .doc(this.id)
+      .collection('messages')
+      .snapshotChanges()
+      .subscribe((doc) => {
+        for (const data of doc) {
+          data.payload.doc.ref.delete();
+        }
+      });
+    this.db.collection('room').doc(this.id).delete();
   }
 }
