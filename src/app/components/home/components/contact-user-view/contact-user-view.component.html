@@ -13,9 +13,20 @@
 
   <span>{{ user?.doc?.description }}</span>
 
-  <button mat-stroked-button color="warn" (click)="openDialog()">
-    Delete user
-  </button>
+  <div>
+    <button mat-stroked-button color="warn" (click)="openDialog()">
+      Delete user
+    </button>
+
+    <button
+      mat-stroked-button
+      color="primary"
+      [ngStyle]="{ 'margin-left': '20px' }"
+      (click)="cleanChat()"
+    >
+      clean chat
+    </button>
+  </div>
 </div>
 
 <div *ngIf="user?.doc === undefined" class="container">

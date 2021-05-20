@@ -51,6 +51,18 @@ export class ContactUserViewComponent {
     });
   }
 
+  cleanChat() {
+    try {
+      const res = this.roomService.cleanChat();
+
+      setTimeout(() => {
+        res.unsubscribe();
+      }, 200);
+    } catch (error) {
+      this.openSnackBar('error cleaning chat', 'dismiss');
+    }
+  }
+
   private openSnackBar(message: string, action: string): void {
     this.snackBar.open(message, action, {
       duration: 5000,

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -82,5 +82,20 @@ export class RoomService {
         }
       });
     this.db.collection('room').doc(this.id).delete();
+  }
+
+  cleanChat(): Subscription {
+    this.db.collection('room').doc(this.id).update({ lastMessage: 'Kaiwa :)' });
+
+    return this.db
+      .collection('room')
+      .doc(this.id)
+      .collection('messages')
+      .snapshotChanges()
+      .subscribe((doc) => {
+        for (const data of doc) {
+          data.payload.doc.ref.delete();
+        }
+      });
   }
 }
