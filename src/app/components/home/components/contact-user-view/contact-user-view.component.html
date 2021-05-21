@@ -1,7 +1,7 @@
 <div *ngIf="user?.doc !== undefined" class="container">
   <img
     [src]="
-      user?.doc?.avatar === undefined
+      user?.doc?.avatar === undefined || user?.doc?.avatar === ''
         ? 'assets/image/default-user-img.jpg'
         : user.doc?.avatar
     "

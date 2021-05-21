@@ -36,6 +36,10 @@ export class UserService {
       });
   }
 
+  updateUser(user: any, id: string) {
+    this.db.collection('users').doc(id).update(user);
+  }
+
   getContacts(id: string): Observable<any> {
     if (id) {
       return this.db

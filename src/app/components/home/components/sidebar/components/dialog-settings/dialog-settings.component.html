@@ -1,0 +1,91 @@
+<mat-dialog-content class="container-content">
+  <h3>Update your profile</h3>
+
+  <div [ngStyle]="{ visibility: spinner ? 'hidden' : '' }">
+    <div class="file">
+      <img
+        [src]="
+          filePre === undefined || filePre === ''
+            ? user.avatar === undefined || user.avatar === ''
+              ? 'assets/image/default-user-img.jpg'
+              : user.avatar
+            : filePre
+        "
+        alt="avatar-dialog"
+        class="avatar avatar-preview"
+      />
+      <input
+        type="file"
+        name="avatar"
+        id="file"
+        (change)="onUploadImg($event)"
+      />
+      <label for="file">
+        <fa-icon [icon]="faCameraRetro"></fa-icon>
+      </label>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="update($event)">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Fist Name</mat-label>
+        <input formControlName="firstName" matInput placeholder="Name" />
+        <mat-error *ngIf="form.controls.firstName.hasError('required')">
+          First Name is <strong>required</strong>
+        </mat-error>
+        <mat-error
+          *ngIf="
+            !form.controls.firstName.hasError('required') &&
+            form.controls.firstName.hasError('maxlength')
+          "
+        >
+          Maximum about <strong>30</strong> characters
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Last Name</mat-label>
+        <input formControlName="lastName" matInput placeholder="Last Name" />
+        <mat-error *ngIf="form.controls.lastName.hasError('required')">
+          Last Name is <strong>required</strong>
+        </mat-error>
+        <mat-error
+          *ngIf="
+            !form.controls.lastName.hasError('required') &&
+            form.controls.lastName.hasError('maxlength')
+          "
+        >
+          Maximum about <strong>30</strong> characters
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <input
+          formControlName="description"
+          matInput
+          placeholder="description"
+        />
+        <mat-error *ngIf="form.controls.description.hasError('maxlength')">
+          Maximum about <strong>50</strong> characters
+        </mat-error>
+      </mat-form-field>
+
+      <button
+        mat-flat-button
+        color="primary"
+        class="full-width btn"
+        type="submit"
+        [disabled]="!form.valid"
+      >
+        Update
+      </button>
+    </form>
+  </div>
+
+  <mat-spinner
+    [ngStyle]="{ visibility: !spinner ? 'hidden' : '' }"
+  ></mat-spinner>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close color="primary">Close</button>
+</mat-dialog-actions>

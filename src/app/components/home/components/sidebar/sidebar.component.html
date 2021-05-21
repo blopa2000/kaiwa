@@ -2,13 +2,23 @@
   <div class="avatar" #avatar></div>
   <div class="title-content">
     <h3 class="title">
-      {{ user.firstName + " " + user.lastName | chainAdjustment: 26 }}
+      {{ user.firstName + " " + user.lastName | chainAdjustment: 30 }}
     </h3>
-    <span class="subtitle">{{ user.description | chainAdjustment: 24 }}</span>
+    <span class="subtitle">{{ user.description | chainAdjustment: 35 }}</span>
   </div>
-  <button mat-icon-button aria-label="settings">
+  <button
+    mat-icon-button
+    aria-label="settings"
+    [matMenuTriggerFor]="menu"
+    #menuTrigger
+  >
     <fa-icon [icon]="faEllipsisV"></fa-icon>
   </button>
+
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="openDialog()">Open dialog</button>
+    <button mat-menu-item (click)="exit()">Exit</button>
+  </mat-menu>
 </div>
 
 <div class="l-form">

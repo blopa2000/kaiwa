@@ -12,6 +12,7 @@ import { UserListItemComponent } from './components/user-list-item/user-list-ite
 import { ChatComponent } from './components/chat/chat.component';
 import { ContactUserViewComponent } from './components/contact-user-view/contact-user-view.component';
 import { DialogContactComponent } from './components/dialog-contact/dialog-contact.component';
+import { DialogSettingsComponent } from './components/sidebar/components/dialog-settings/dialog-settings.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { DialogContactComponent } from './components/dialog-contact/dialog-conta
     ChatComponent,
     ContactUserViewComponent,
     DialogContactComponent,
+    DialogSettingsComponent,
   ],
   imports: [
     CommonModule,

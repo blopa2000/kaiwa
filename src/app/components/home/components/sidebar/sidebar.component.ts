@@ -1,7 +1,12 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import { MatDialog } from '@angular/material/dialog';
+import { MatMenuTrigger } from '@angular/material/menu';
+
 import { UserService } from '@services/user/user.service';
 import { RoomService } from '@services/room/room.service';
+
+import { DialogSettingsComponent } from './components/dialog-settings/dialog-settings.component';
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
@@ -9,6 +14,7 @@ import { RoomService } from '@services/room/room.service';
 })
 export class SidebarComponent implements OnInit {
   @ViewChild('avatar', { static: true }) avatar: ElementRef;
+  @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;
 
   listUserItem: any[] = [];
   user: any = {};
@@ -18,7 +24,8 @@ export class SidebarComponent implements OnInit {
 
   constructor(
     private usersService: UserService,
-    private roomService: RoomService
+    private roomService: RoomService,
+    public dialog: MatDialog
   ) {
     this.usersService.user$.subscribe((user) => {
       this.user = user;
@@ -67,5 +74,16 @@ export class SidebarComponent implements OnInit {
     if (this.user.avatar !== undefined && this.user.avatar !== '') {
       this.avatar.nativeElement.style.backgroundImage = `url(${this.user.avatar})`;
     }
+  }
+
+  openDialog() {
+    const dialogRef = this.dialog.open(DialogSettingsComponent, {
+      restoreFocus: false,
+    });
+    dialogRef.afterClosed().subscribe(() => this.menuTrigger.focus());
+  }
+
+  exit() {
+    console.log('sign off');
   }
 }
