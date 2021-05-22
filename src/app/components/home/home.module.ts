@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeRoutingModule } from './home-routing.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { HomeComponent } from './home.component';
 import { SharedModule } from '@shared/shared.module';
@@ -13,6 +13,7 @@ import { ChatComponent } from './components/chat/chat.component';
 import { ContactUserViewComponent } from './components/contact-user-view/contact-user-view.component';
 import { DialogContactComponent } from './components/dialog-contact/dialog-contact.component';
 import { DialogSettingsComponent } from './components/sidebar/components/dialog-settings/dialog-settings.component';
+import { InputSearchComponent } from './components/sidebar/components/input-search/input-search.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { DialogSettingsComponent } from './components/sidebar/components/dialog-
     ContactUserViewComponent,
     DialogContactComponent,
     DialogSettingsComponent,
+    InputSearchComponent,
   ],
   imports: [
     CommonModule,
@@ -31,6 +33,7 @@ import { DialogSettingsComponent } from './components/sidebar/components/dialog-
     MaterialModule,
     FontAwesomeModule,
     ReactiveFormsModule,
+    FormsModule,
   ],
 })
 export class HomeModule {}

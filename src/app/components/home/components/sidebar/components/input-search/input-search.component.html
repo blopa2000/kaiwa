@@ -1,0 +1,32 @@
+<div class="l-form">
+  <form action="" class="form">
+    <div class="form__contact-input">
+      <input
+        type="text"
+        class="form__input"
+        [formControl]="search"
+        name="search"
+      />
+      <label class="form__label">search</label>
+    </div>
+  </form>
+</div>
+
+<div class="card-search" *ngIf="search.value && listUsers?.length > 0">
+  <button
+    *ngFor="let user of listUsers"
+    mat-button
+    (click)="addContacts(user.id)"
+  >
+    <img
+      [src]="
+        user.doc.avatar === undefined || user.doc.avatar === ''
+          ? 'assets/image/default-user-img.jpg'
+          : user.doc.avatar
+      "
+      alt=""
+      class="avatar"
+    />
+    <h3>{{ user.doc.firstName + " " + user.doc.lastName }}</h3>
+  </button>
+</div>

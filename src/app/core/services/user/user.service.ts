@@ -40,6 +40,10 @@ export class UserService {
     this.db.collection('users').doc(id).update(user);
   }
 
+  addContact(id: string, contact: object) {
+    this.db.collection('users').doc(id).collection('contacts').add(contact);
+  }
+
   getContacts(id: string): Observable<any> {
     if (id) {
       return this.db
@@ -49,6 +53,14 @@ export class UserService {
         .snapshotChanges();
     }
     return of(null);
+  }
+
+  validateMyContacts(id: string) {
+    return this.db
+      .collection('users')
+      .doc(id)
+      .collection('contacts')
+      .valueChanges();
   }
 
   getUserContact(id: string): Observable<any> {
@@ -96,5 +108,15 @@ export class UserService {
             .delete();
         }
       });
+  }
+
+  searchUsers(user: string) {
+    return this.db
+      .collection('users', (ref) =>
+        ref
+          .where('firstName', '>=', user)
+          .where('firstName', '<=', user + '\uf8ff')
+      )
+      .get();
   }
 }

@@ -16,6 +16,10 @@ export class RoomService {
 
   constructor(private db: AngularFirestore) {}
 
+  createRoom(room: object) {
+    return this.db.collection('room').add(room);
+  }
+
   getRoom(id: string): any {
     return this.db.collection('room').doc(id).valueChanges();
   }

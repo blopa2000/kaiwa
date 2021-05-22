@@ -1,0 +1,88 @@
+@import "styles/vars";
+
+.l-form {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 20px 0 0 20px;
+}
+
+.form {
+  width: 85%;
+  &__contact-input {
+    position: relative;
+    height: 50px;
+  }
+
+  &__input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10%;
+    font-size: 1rem;
+    border: 1px solid #dadce0;
+    border-radius: 2rem;
+    outline: none;
+    padding: 1rem;
+    background: none;
+    z-index: 1;
+  }
+  &__label {
+    height: 9px;
+    position: absolute;
+    left: 0.5rem;
+    top: 0.5rem;
+    padding: 0 0.25rem;
+    background-color: #fff;
+    color: #80868b;
+    font-size: 1rem;
+    transition: 0.3s;
+    text-transform: capitalize;
+  }
+
+  &__input:focus ~ .form__label {
+    top: -0.5rem;
+    left: 1.5rem;
+    color: $primary;
+    font-size: small;
+    font-weight: 500;
+    z-index: 3;
+  }
+  &__input:not(:placeholder-shown).form__input:not(:focus) + .form__label {
+    top: -0.5rem;
+    left: 1.5rem;
+    font-size: small;
+    font-weight: 500;
+    z-index: 3;
+  }
+
+  &__input:focus {
+    border: 1px solid $primary;
+  }
+}
+
+.card-search {
+  padding: 10px;
+  background-color: #f5f3f3;
+  display: flex;
+  flex-direction: column;
+}
+
+:host::ng-deep.mat-button {
+  padding: 0;
+  width: 100%;
+}
+
+:host::ng-deep.mat-button-wrapper {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 4px;
+  margin: 0 !important;
+
+  h3 {
+    margin-bottom: 0;
+    margin-left: 10px;
+  }
+}

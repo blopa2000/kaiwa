@@ -1,5 +1,5 @@
 <div class="user-info">
-  <div class="avatar" #avatar></div>
+  <div class="avatar avatar-default-img" #avatar></div>
   <div class="title-content">
     <h3 class="title">
       {{ user.firstName + " " + user.lastName | chainAdjustment: 30 }}
@@ -21,14 +21,7 @@
   </mat-menu>
 </div>
 
-<div class="l-form">
-  <form action="" class="form">
-    <div class="form__contact-input">
-      <input type="text" class="form__input" />
-      <label class="form__label">search</label>
-    </div>
-  </form>
-</div>
+<app-input-search></app-input-search>
 
 <app-user-list-item
   *ngFor="let user of listUserItem"
