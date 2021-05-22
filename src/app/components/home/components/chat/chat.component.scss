@@ -1,7 +1,8 @@
 @import "styles/vars";
 
 %message {
-  padding: 10px;
+  display: flex;
+  align-items: baseline;
   max-width: 200px;
   color: #fff;
   font-size: 15px;
@@ -62,6 +63,7 @@
     .content-msg {
       display: flex;
       .message-user {
+        padding: 10px;
         background-color: #131747;
         border-radius: 0px 10px 10px 10px;
         @extend %message;
@@ -76,8 +78,20 @@
       .message-my-user {
         background-color: $primary;
         margin-left: auto;
+        padding: 0px 10px 10px 10px;
         border-radius: 10px 0px 10px 10px;
         @extend %message;
+      }
+
+      .btnMessage {
+        padding-left: 2px;
+        min-width: 0;
+        width: 7px;
+        height: 0px;
+        flex-shrink: 0;
+        line-height: 40px;
+        border-radius: 50%;
+        opacity: 0.5;
       }
 
       .myMsg {

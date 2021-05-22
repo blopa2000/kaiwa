@@ -16,6 +16,23 @@
         "
       >
         {{ msg.message }}
+
+        <div *ngIf="msg?.idUser === user?.id">
+          <button
+            mat-icon-button
+            aria-label="settings"
+            [matMenuTriggerFor]="menu"
+            #menuTrigger
+            class="btnMessage"
+          >
+            <fa-icon [icon]="faChevronDown"></fa-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="deleteMessage(msg.id)">
+              delete
+            </button>
+          </mat-menu>
+        </div>
       </div>
       <span *ngIf="msg?.idUser === user?.id" class="myMsg"></span>
     </div>

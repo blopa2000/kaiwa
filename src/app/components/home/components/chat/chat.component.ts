@@ -8,7 +8,7 @@ import {
 import { RoomService } from '@services/room/room.service';
 import { UserService } from '@services/user/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 import { FormControl, Validators } from '@angular/forms';
 
@@ -32,6 +32,7 @@ export class ChatComponent implements OnInit, DoCheck {
 
   //icon
   faPaperPlane = faPaperPlane;
+  faChevronDown = faChevronDown;
 
   constructor(
     private roomService: RoomService,
@@ -122,6 +123,10 @@ export class ChatComponent implements OnInit, DoCheck {
         this.openSnackBar('Error trying to send the message', 'dismiss');
       }
     }
+  }
+
+  deleteMessage(id: string) {
+    this.roomService.deleteMessage(id);
   }
 
   private openSnackBar(message: string, action: string): void {

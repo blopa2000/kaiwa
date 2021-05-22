@@ -23,6 +23,12 @@
 
 <app-input-search></app-input-search>
 
+<div *ngIf="!listUserItem?.length" class="noContacts">
+  <img src="assets/image/search.svg" alt="search" />
+
+  <h3>You have no contacts? search to start a conversation.</h3>
+</div>
+
 <app-user-list-item
   *ngFor="let user of listUserItem"
   [user]="user"

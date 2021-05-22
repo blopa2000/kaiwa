@@ -24,6 +24,23 @@ export class RoomService {
     return this.db.collection('room').doc(id).valueChanges();
   }
 
+  deleteRoom() {
+    this.ID.next('');
+    this.message.next([]);
+
+    this.db
+      .collection('room')
+      .doc(this.id)
+      .collection('messages')
+      .snapshotChanges()
+      .subscribe((doc) => {
+        for (const data of doc) {
+          data.payload.doc.ref.delete();
+        }
+      });
+    this.db.collection('room').doc(this.id).delete();
+  }
+
   getMessage(id: string) {
     this.id = id;
     this.ID.next(id);
@@ -79,23 +96,6 @@ export class RoomService {
     return this.db.collection('room').doc(this.id).valueChanges();
   }
 
-  deleteRoom() {
-    this.ID.next('');
-    this.message.next([]);
-
-    this.db
-      .collection('room')
-      .doc(this.id)
-      .collection('messages')
-      .snapshotChanges()
-      .subscribe((doc) => {
-        for (const data of doc) {
-          data.payload.doc.ref.delete();
-        }
-      });
-    this.db.collection('room').doc(this.id).delete();
-  }
-
   cleanChat(): Subscription {
     this.db.collection('room').doc(this.id).update({ lastMessage: 'Kaiwa :)' });
 
@@ -109,5 +109,14 @@ export class RoomService {
           data.payload.doc.ref.delete();
         }
       });
+  }
+
+  deleteMessage(idMsg: string) {
+    this.db
+      .collection('room')
+      .doc(this.id)
+      .collection('messages')
+      .doc(idMsg)
+      .delete();
   }
 }
