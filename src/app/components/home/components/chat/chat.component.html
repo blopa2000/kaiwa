@@ -8,11 +8,16 @@
 
 <div [hidden]="idRoom === ''" class="container">
   <div class="container-message" #containerMessage>
-    <div
-      *ngFor="let msg of messages"
-      [ngClass]="msg?.idUser === user?.id ? 'message-my-user' : 'message-user'"
-    >
-      {{ msg.message }}
+    <div *ngFor="let msg of messages" class="content-msg">
+      <span *ngIf="msg?.idUser !== user?.id" class="msg"> </span>
+      <div
+        [ngClass]="
+          msg?.idUser === user?.id ? 'message-my-user' : 'message-user'
+        "
+      >
+        {{ msg.message }}
+      </div>
+      <span *ngIf="msg?.idUser === user?.id" class="myMsg"></span>
     </div>
   </div>
 

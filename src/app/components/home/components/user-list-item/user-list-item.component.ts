@@ -31,7 +31,7 @@ export class UserListItemComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    if (this.user.avatar !== undefined && this.user.avatar !== '') {
+    if (this.user?.avatar !== undefined && this.user?.avatar !== '') {
       this.avatar.nativeElement.style.backgroundImage = `url(${this.user.avatar})`;
     }
   }

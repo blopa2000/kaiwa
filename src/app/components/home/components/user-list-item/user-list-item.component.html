@@ -6,7 +6,7 @@
       {{ user?.firstName + " " + user?.lastName | chainAdjustment: 25 }}
     </h3>
     <span class="lastMessage">{{
-      user.room?.lastMessage | chainAdjustment: 40
+      user?.room?.lastMessage | chainAdjustment: 40
     }}</span>
   </div>
 

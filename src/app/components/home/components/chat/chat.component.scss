@@ -3,20 +3,16 @@
 %message {
   padding: 10px;
   max-width: 200px;
-  border-radius: 10px;
   color: #fff;
   font-size: 15px;
   margin-bottom: 10px;
-  position: relative;
+  word-break: break-all;
 }
 
-%afterMessage {
-  content: "";
-  display: block;
+%pinMsg {
   width: 15px;
   height: 15px;
-  position: absolute;
-  top: 0;
+  display: block;
 }
 
 :host {
@@ -62,26 +58,33 @@
       border-radius: 20px;
       background-color: $primary;
     }
-  }
-  .message-user {
-    background-color: #131747;
-    @extend %message;
-    &::after {
-      @extend %afterMessage;
-      left: -7px;
-      background-color: #131747;
-      clip-path: polygon(100% 0, 0 0, 99% 100%);
-    }
-  }
-  .message-my-user {
-    background-color: $primary;
-    margin-left: auto;
-    @extend %message;
-    &::after {
-      @extend %afterMessage;
-      right: -7px;
-      background-color: $primary;
-      clip-path: polygon(100% 0, 0 0, 0 100%);
+
+    .content-msg {
+      display: flex;
+      .message-user {
+        background-color: #131747;
+        border-radius: 0px 10px 10px 10px;
+        @extend %message;
+      }
+
+      .msg {
+        background-color: #131747;
+        clip-path: polygon(100% 0, 0 0, 99% 100%);
+        @extend %pinMsg;
+      }
+
+      .message-my-user {
+        background-color: $primary;
+        margin-left: auto;
+        border-radius: 10px 0px 10px 10px;
+        @extend %message;
+      }
+
+      .myMsg {
+        background-color: $primary;
+        clip-path: polygon(100% 0, 0 0, 0 100%);
+        @extend %pinMsg;
+      }
     }
   }
 
@@ -91,33 +94,33 @@
     border-top: 1px solid #d7d7d7;
     background-color: #f1f1f1;
     box-sizing: border-box;
-  }
 
-  .form {
-    width: 100%;
-    display: flex;
-    &__contact-input {
-      height: 50px;
-      margin-right: 10px;
-      flex: 1 1 auto;
+    .form {
+      width: 100%;
+      display: flex;
+      &__contact-input {
+        height: 50px;
+        margin-right: 10px;
+        flex: 1 1 auto;
+      }
+
+      &__input {
+        height: 10%;
+        font-size: 1rem;
+        border: 1px solid #303030;
+        border-radius: 2rem;
+        outline: none;
+        padding: 1rem;
+        background: none;
+        width: 80%;
+      }
+      &__input:focus {
+        border: 1px solid $primary;
+      }
     }
 
-    &__input {
-      height: 10%;
-      font-size: 1rem;
-      border: 1px solid #303030;
-      border-radius: 2rem;
-      outline: none;
-      padding: 1rem;
-      background: none;
-      width: 80%;
+    .btn-send-message {
+      font-size: 25px;
     }
-    &__input:focus {
-      border: 1px solid $primary;
-    }
-  }
-
-  .btn-send-message {
-    font-size: 25px;
   }
 }

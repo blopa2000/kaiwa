@@ -24,6 +24,8 @@ export class ChatComponent implements OnInit, DoCheck {
   messages = [];
   count: any = 0;
   user: any = {};
+  userContact: any = {};
+  listContacts: any[];
   idRoom: any = '';
   idUser: string = '';
   messageInput: FormControl;
@@ -48,6 +50,13 @@ export class ChatComponent implements OnInit, DoCheck {
 
     this.roomService.ID$.subscribe((id) => {
       this.idRoom = id;
+    });
+
+    this.userService.userContact$.subscribe((doc) => {
+      this.userContact = doc;
+      this.userService.validateMyContacts(doc.id).subscribe((doc) => {
+        this.listContacts = doc;
+      });
     });
   }
 
@@ -88,6 +97,27 @@ export class ChatComponent implements OnInit, DoCheck {
 
         await this.roomService.newMessage(msg);
         await this.roomService.updateLastMessage(lastMessage);
+
+        /**
+         *
+         * in this part my identification is added to the other
+         * user to make the link to the chat
+         *
+         */
+        if (this.messages.length <= 1) {
+          const find = this.listContacts.find(
+            (doc) => doc.user === this.user.id
+          );
+
+          if (find === undefined) {
+            const contact = {
+              room: this.idRoom,
+              user: this.user.id,
+            };
+
+            this.userService.addContact(this.userContact.id, contact);
+          }
+        }
       } catch (response: any) {
         this.openSnackBar('Error trying to send the message', 'dismiss');
       }

@@ -33,7 +33,7 @@ export class RoomService {
       .collection('messages', (ref) =>
         ref.orderBy('timestamp', 'desc').limit(20)
       )
-      .valueChanges()
+      .snapshotChanges()
       .pipe(
         map((messages) => {
           const chats = [];
@@ -44,7 +44,15 @@ export class RoomService {
         })
       )
       .subscribe((doc) => {
-        this.message.next(doc);
+        const messages = [];
+        for (const msg of doc) {
+          messages.push({
+            ...msg.payload.doc.data(),
+            id: msg.payload.doc.id,
+          });
+        }
+
+        this.message.next(messages);
       });
   }
 
