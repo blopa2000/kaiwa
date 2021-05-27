@@ -1,4 +1,5 @@
 @import "styles/vars";
+@import "styles/mixins";
 
 %message {
   display: flex;
@@ -21,6 +22,20 @@
   border-left: 1px solid #d7d7d7;
   border-right: 1px solid #d7d7d7;
   box-sizing: border-box;
+  @include response-to(1000px) {
+    display: none;
+  }
+
+  .menu {
+    display: none;
+
+    @include response-to(1000px) {
+      display: flex;
+    }
+    .menu-spacer {
+      flex: 1 1 auto;
+    }
+  }
 
   .container {
     height: 100%;
@@ -42,11 +57,17 @@
         border-bottom: 1px solid #d7d7d7;
       }
     }
+    .icon-btn {
+      font-size: 25px;
+    }
   }
 
   .container-message {
     padding: 20px;
     height: 90%;
+    @include response-to(1000px) {
+      height: 80%;
+    }
     box-sizing: border-box;
     overflow: auto;
     &::-webkit-scrollbar {

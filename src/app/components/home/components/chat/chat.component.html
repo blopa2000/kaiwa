@@ -7,6 +7,25 @@
 </div>
 
 <div [hidden]="idRoom === ''" class="container">
+  <mat-toolbar class="menu">
+    <button mat-icon-button (click)="changeView('start')">
+      <fa-icon [icon]="faArrowLeft"></fa-icon>
+    </button>
+    <span>{{
+      userContact?.doc?.firstName + " " + userContact?.doc?.lastName
+        | chainAdjustment: 15
+    }}</span>
+    <span class="menu-spacer"></span>
+    <button
+      mat-icon-button
+      class="icon-btn"
+      aria-label="Example icon-button with menu icon"
+      (click)="changeView('profile')"
+    >
+      <fa-icon [icon]="faUserCircle"></fa-icon>
+    </button>
+  </mat-toolbar>
+
   <div class="container-message" #containerMessage>
     <div *ngFor="let msg of messages" class="content-msg">
       <span *ngIf="msg?.idUser !== user?.id" class="msg"> </span>

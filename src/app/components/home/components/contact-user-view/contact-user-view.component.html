@@ -1,3 +1,9 @@
+<mat-toolbar class="menu">
+  <button mat-icon-button (click)="changeView('chat')">
+    <fa-icon [icon]="faArrowLeft"></fa-icon>
+  </button>
+</mat-toolbar>
+
 <div *ngIf="user?.doc !== undefined" class="container">
   <img
     [src]="

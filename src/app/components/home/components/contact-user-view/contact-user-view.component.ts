@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, DoCheck, ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 import { DialogContactComponent } from './../dialog-contact/dialog-contact.component';
 
@@ -12,16 +13,20 @@ import { RoomService } from '@services/room/room.service';
   templateUrl: './contact-user-view.component.html',
   styleUrls: ['./contact-user-view.component.scss'],
 })
-export class ContactUserViewComponent {
+export class ContactUserViewComponent implements DoCheck {
   user: any = undefined;
-
+  view: string;
   idUser: string = '';
+
+  //icon
+  faArrowLeft = faArrowLeft;
 
   constructor(
     private userService: UserService,
     private roomService: RoomService,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private el: ElementRef
   ) {
     this.userService.userContact$.subscribe((doc) => {
       this.user = doc;
@@ -30,6 +35,20 @@ export class ContactUserViewComponent {
     this.userService.user$.subscribe((doc) => {
       this.idUser = doc.id;
     });
+
+    this.roomService.view$.subscribe((data) => {
+      this.view = data;
+    });
+  }
+
+  ngDoCheck() {
+    if (window.innerWidth < 950) {
+      if (this.view === 'profile') {
+        this.el.nativeElement.style.display = 'block';
+      } else {
+        this.el.nativeElement.style.display = 'none';
+      }
+    }
   }
 
   openDialog() {
@@ -61,6 +80,10 @@ export class ContactUserViewComponent {
     } catch (error) {
       this.openSnackBar('error cleaning chat', 'dismiss');
     }
+  }
+
+  changeView(state) {
+    this.roomService.changeView(state);
   }
 
   private openSnackBar(message: string, action: string): void {

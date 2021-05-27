@@ -1,4 +1,5 @@
 @import "styles/vars";
+@import "styles/mixins";
 
 :host {
   width: 300px;
@@ -7,6 +8,19 @@
   border-left: 1px solid #d7d7d7;
   padding: 20px;
   box-sizing: border-box;
+  @include response-to(1000px) {
+    display: none;
+    width: 100%;
+    padding: 0;
+  }
+
+  .menu {
+    display: none;
+    @include response-to(1000px) {
+      display: flex;
+    }
+  }
+
   .container {
     height: 100%;
     display: flex;
@@ -14,6 +28,9 @@
     justify-content: center;
     align-items: center;
     text-align: center;
+    @include response-to(1000px) {
+      height: 60%;
+    }
   }
   .avatar-big {
     width: 150px;

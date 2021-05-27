@@ -14,6 +14,9 @@ export class RoomService {
   private ID = new BehaviorSubject<string>('');
   public ID$ = this.ID.asObservable();
 
+  private view = new BehaviorSubject<string>('start');
+  public view$ = this.view.asObservable();
+
   constructor(private db: AngularFirestore) {}
 
   createRoom(room: object) {
@@ -44,6 +47,7 @@ export class RoomService {
   getMessage(id: string) {
     this.id = id;
     this.ID.next(id);
+    this.view.next('chat');
     return this.db
       .collection('room')
       .doc(id)
@@ -118,5 +122,9 @@ export class RoomService {
       .collection('messages')
       .doc(idMsg)
       .delete();
+  }
+
+  changeView(state: string) {
+    this.view.next(state);
   }
 }

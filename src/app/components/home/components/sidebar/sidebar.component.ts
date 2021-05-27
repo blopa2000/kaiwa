@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  DoCheck,
+} from '@angular/core';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -12,12 +18,13 @@ import { DialogSettingsComponent } from './components/dialog-settings/dialog-set
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, DoCheck {
   @ViewChild('avatar', { static: true }) avatar: ElementRef;
   @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;
 
   listUserItem: any[] = [];
   user: any = {};
+  view: string;
 
   // icon
   faEllipsisV = faEllipsisV;
@@ -25,15 +32,30 @@ export class SidebarComponent implements OnInit {
   constructor(
     private usersService: UserService,
     private roomService: RoomService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private el: ElementRef
   ) {
     this.usersService.user$.subscribe((user) => {
       this.user = user;
       this.getContacts();
     });
+
+    this.roomService.view$.subscribe((data) => {
+      this.view = data;
+    });
   }
 
   ngOnInit(): void {}
+
+  ngDoCheck() {
+    if (window.innerWidth < 950) {
+      if (this.view === 'start') {
+        this.el.nativeElement.style.display = 'block';
+      } else {
+        this.el.nativeElement.style.display = 'none';
+      }
+    }
+  }
 
   getContacts() {
     this.usersService.getContacts(this.user.id).subscribe((contacts: any) => {

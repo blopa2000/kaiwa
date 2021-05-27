@@ -8,7 +8,12 @@ import {
 import { RoomService } from '@services/room/room.service';
 import { UserService } from '@services/user/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { faPaperPlane, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPaperPlane,
+  faChevronDown,
+  faArrowLeft,
+  faUserCircle,
+} from '@fortawesome/free-solid-svg-icons';
 
 import { FormControl, Validators } from '@angular/forms';
 
@@ -29,15 +34,19 @@ export class ChatComponent implements OnInit, DoCheck {
   idRoom: any = '';
   idUser: string = '';
   messageInput: FormControl;
+  view: string = 'start';
 
   //icon
   faPaperPlane = faPaperPlane;
   faChevronDown = faChevronDown;
+  faArrowLeft = faArrowLeft;
+  faUserCircle = faUserCircle;
 
   constructor(
     private roomService: RoomService,
     private userService: UserService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private el: ElementRef
   ) {
     this.messageInput = new FormControl('', [Validators.required]);
 
@@ -59,11 +68,23 @@ export class ChatComponent implements OnInit, DoCheck {
         this.listContacts = doc;
       });
     });
+
+    this.roomService.view$.subscribe((data) => {
+      this.view = data;
+    });
   }
 
   ngOnInit(): void {}
 
   ngDoCheck() {
+    if (window.innerWidth < 950) {
+      if (this.view === 'chat') {
+        this.el.nativeElement.style.display = 'block';
+      } else {
+        this.el.nativeElement.style.display = 'none';
+      }
+    }
+
     if (this.messages.length > 0) {
       this.containerMessage.nativeElement.scrollTop =
         this.containerMessage.nativeElement.scrollHeight;
@@ -127,6 +148,10 @@ export class ChatComponent implements OnInit, DoCheck {
 
   deleteMessage(id: string) {
     this.roomService.deleteMessage(id);
+  }
+
+  changeView(state) {
+    this.roomService.changeView(state);
   }
 
   private openSnackBar(message: string, action: string): void {
