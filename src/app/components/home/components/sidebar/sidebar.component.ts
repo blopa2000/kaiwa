@@ -5,12 +5,14 @@ import {
   ViewChild,
   DoCheck,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
 
 import { UserService } from '@services/user/user.service';
 import { RoomService } from '@services/room/room.service';
+import { AuthService } from '@services/auth/auth.service';
 
 import { DialogSettingsComponent } from './components/dialog-settings/dialog-settings.component';
 @Component({
@@ -32,8 +34,10 @@ export class SidebarComponent implements OnInit, DoCheck {
   constructor(
     private usersService: UserService,
     private roomService: RoomService,
-    public dialog: MatDialog,
-    private el: ElementRef
+    private authService: AuthService,
+    private router: Router,
+    private el: ElementRef,
+    public dialog: MatDialog
   ) {
     this.usersService.user$.subscribe((user) => {
       this.user = user;
@@ -54,6 +58,10 @@ export class SidebarComponent implements OnInit, DoCheck {
       } else {
         this.el.nativeElement.style.display = 'none';
       }
+    }
+
+    if (this.user.avatar !== undefined && this.user.avatar !== '') {
+      this.avatar.nativeElement.style.backgroundImage = `url(${this.user.avatar})`;
     }
   }
 
@@ -92,10 +100,6 @@ export class SidebarComponent implements OnInit, DoCheck {
         }
       }
     });
-
-    if (this.user.avatar !== undefined && this.user.avatar !== '') {
-      this.avatar.nativeElement.style.backgroundImage = `url(${this.user.avatar})`;
-    }
   }
 
   openDialog() {
@@ -105,7 +109,12 @@ export class SidebarComponent implements OnInit, DoCheck {
     dialogRef.afterClosed().subscribe(() => this.menuTrigger.focus());
   }
 
-  exit() {
-    console.log('sign off');
+  async exit() {
+    try {
+      await this.authService.exit();
+      this.router.navigate(['/sign-in']);
+    } catch (error) {
+      console.error('failed exit');
+    }
   }
 }

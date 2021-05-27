@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
 
   getuser(): void {
     this.authService.verifyUser().subscribe((data) => {
-      this.usersService.getUser(data.uid);
+      this.usersService.getUser(data?.uid);
     });
   }
 

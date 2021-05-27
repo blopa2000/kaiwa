@@ -12,7 +12,7 @@
 }
 
 %pinMsg {
-  width: 15px;
+  width: 11.5px;
   height: 15px;
   display: block;
 }
@@ -83,6 +83,8 @@
 
     .content-msg {
       display: flex;
+      position: relative;
+
       .message-user {
         padding: 10px;
         background-color: #131747;
@@ -93,6 +95,8 @@
       .msg {
         background-color: #131747;
         clip-path: polygon(100% 0, 0 0, 99% 100%);
+        position: absolute;
+        left: -8px;
         @extend %pinMsg;
       }
 
@@ -118,6 +122,8 @@
       .myMsg {
         background-color: $primary;
         clip-path: polygon(100% 0, 0 0, 0 100%);
+        position: absolute;
+        right: -8px;
         @extend %pinMsg;
       }
     }

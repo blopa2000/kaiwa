@@ -16,8 +16,8 @@ export class AuthService {
     return this.auth.createUserWithEmailAndPassword(email, password);
   }
 
-  exit(): Promise<any> {
-    return this.auth.signOut();
+  exit(): any {
+    this.auth.signOut();
   }
 
   verifyUser(): Observable<any | null> {
