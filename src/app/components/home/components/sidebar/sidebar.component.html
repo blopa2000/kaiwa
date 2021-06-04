@@ -29,7 +29,51 @@
   <h3>You have no contacts? search to start a conversation.</h3>
 </div>
 
-<app-user-list-item
-  *ngFor="let user of listUserItem"
-  [user]="user"
-></app-user-list-item>
+<div *ngFor="let userItem of listUserItem">
+  <button
+    mat-button
+    (click)="
+      handleClick(
+        userItem.roomID,
+        userItem.id,
+        userItem.contactsID,
+        userItem.room.idUser
+      )
+    "
+  >
+    <img
+      [src]="
+        userItem?.avatar === undefined || userItem?.avatar === ''
+          ? 'assets/image/default-user-img.jpg'
+          : userItem?.avatar
+      "
+      alt="avatar-user-contact"
+      class="avatar avatar-big"
+    />
+
+    <div class="info">
+      <h3>
+        {{
+          userItem?.firstName + " " + userItem?.lastName | chainAdjustment: 25
+        }}
+      </h3>
+      <span class="lastMessage">{{
+        userItem?.room?.lastMessage | chainAdjustment: 40
+      }}</span>
+    </div>
+
+    <div class="notifications">
+      <span>{{ userItem?.room?.timestamp?.seconds * 1000 | date }}</span>
+
+      <div
+        class="badge"
+        [ngClass]="{
+          hidden:
+            user?.id === userItem?.room?.idUser || userItem?.room?.messageSeen
+        }"
+      >
+        <span>{{ userItem?.room?.countMessage }}</span>
+      </div>
+    </div>
+  </button>
+</div>

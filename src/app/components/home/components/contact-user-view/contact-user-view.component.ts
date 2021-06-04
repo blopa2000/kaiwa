@@ -7,6 +7,7 @@ import { DialogContactComponent } from './../dialog-contact/dialog-contact.compo
 
 import { UserService } from '@services/user/user.service';
 import { RoomService } from '@services/room/room.service';
+import { DefaultContact, User } from '@models/user.model';
 
 @Component({
   selector: 'app-contact-user-view',
@@ -14,11 +15,11 @@ import { RoomService } from '@services/room/room.service';
   styleUrls: ['./contact-user-view.component.scss'],
 })
 export class ContactUserViewComponent implements DoCheck {
-  user: any = undefined;
+  user: DefaultContact;
   view: string;
-  idUser: string = '';
+  idUser: string;
 
-  //icon
+  // icon
   faArrowLeft = faArrowLeft;
 
   constructor(
@@ -28,20 +29,20 @@ export class ContactUserViewComponent implements DoCheck {
     private snackBar: MatSnackBar,
     private el: ElementRef
   ) {
-    this.userService.userContact$.subscribe((doc) => {
+    this.userService.userContact$.subscribe((doc: DefaultContact) => {
       this.user = doc;
     });
 
-    this.userService.user$.subscribe((doc) => {
+    this.userService.user$.subscribe((doc: User) => {
       this.idUser = doc.id;
     });
 
-    this.roomService.view$.subscribe((data) => {
+    this.roomService.view$.subscribe((data: string) => {
       this.view = data;
     });
   }
 
-  ngDoCheck() {
+  ngDoCheck(): void {
     if (window.innerWidth < 950) {
       if (this.view === 'profile') {
         this.el.nativeElement.style.display = 'block';
@@ -51,7 +52,7 @@ export class ContactUserViewComponent implements DoCheck {
     }
   }
 
-  openDialog() {
+  openDialog(): void {
     const dialogRef = this.dialog.open(DialogContactComponent);
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -70,7 +71,7 @@ export class ContactUserViewComponent implements DoCheck {
     });
   }
 
-  cleanChat() {
+  cleanChat(): void {
     try {
       const res = this.roomService.cleanChat();
 
@@ -82,7 +83,7 @@ export class ContactUserViewComponent implements DoCheck {
     }
   }
 
-  changeView(state) {
+  changeView(state: string): void {
     this.roomService.changeView(state);
   }
 

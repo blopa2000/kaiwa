@@ -10,8 +10,8 @@ import { AuthService } from '@services/auth/auth.service';
 })
 export class SignInComponent implements OnInit {
   form: FormGroup;
-  hide: boolean = true;
-  isSuccess: boolean = false;
+  hide = true;
+  isSuccess = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -23,19 +23,19 @@ export class SignInComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  private buildForm() {
+  private buildForm(): void {
     this.form = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
     });
   }
 
-  async signIn(event: Event) {
+  async signIn(event: Event): Promise<void> {
     event.preventDefault();
     if (this.form.valid) {
       const { email, password } = this.form.value;
       try {
-        const res = await this.authService.signIn(email, password);
+        await this.authService.signIn(email, password);
         this.router.navigate(['/']);
       } catch (error) {
         this.isSuccess = true;

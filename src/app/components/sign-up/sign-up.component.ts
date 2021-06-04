@@ -13,7 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class SignUpComponent implements OnInit {
   form!: FormGroup;
-  hide: boolean = true;
+  hide = true;
 
   constructor(
     private snackBar: MatSnackBar,
@@ -27,7 +27,7 @@ export class SignUpComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  private buildForm() {
+  private buildForm(): void {
     this.form = this.formBuilder.group({
       email: ['', [Validators.email, Validators.required]],
       password: ['', [Validators.minLength(8), Validators.required]],

@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { UserService } from '@services/user/user.service';
 import { RoomService } from '@services/room/room.service';
+import { Contacts, DefaultContact, User } from '@models/user.model';
 
 @Component({
   selector: 'app-input-search',
@@ -10,35 +13,39 @@ import { RoomService } from '@services/room/room.service';
 })
 export class InputSearchComponent implements OnInit {
   search: FormControl;
-  listUsers: any[];
+  listUsers: DefaultContact[];
+  listContacts: Contacts[];
   idUser: string;
-  listContacts: any[];
+
   constructor(
     private userService: UserService,
-    private roomService: RoomService
+    private roomService: RoomService,
+    private snackBar: MatSnackBar
   ) {
     this.search = new FormControl();
 
-    this.userService.user$.subscribe((doc) => {
+    this.userService.user$.subscribe((doc: User) => {
       this.idUser = doc.id;
-      this.userService.validateMyContacts(doc.id).subscribe((doc) => {
-        this.listContacts = doc;
-      });
+      this.userService
+        .validateMyContacts(doc.id)
+        .subscribe((contacts: Contacts[]) => {
+          this.listContacts = contacts;
+        });
     });
   }
 
   ngOnInit(): void {
     this.search.valueChanges.subscribe((doc) => {
-      this.userService.searchUsers(doc).subscribe((doc) => {
+      this.userService.searchUsers(doc).subscribe((data) => {
         this.listUsers = [];
-        for (const user of doc.docs) {
+        for (const user of data.docs) {
           this.listUsers.push({ doc: user.data(), id: user.id });
         }
       });
     });
   }
 
-  addContacts(id) {
+  addContacts(id: string): void {
     const findUser = this.listContacts.find((doc) => doc.user === id);
 
     if (id !== this.idUser && findUser === undefined) {
@@ -58,7 +65,15 @@ export class InputSearchComponent implements OnInit {
         this.search.reset();
       });
     } else {
-      console.log('no se puede establecer un conexion');
+      this.openSnackBar('Error cannot create a chat room', 'dismiss');
     }
+  }
+
+  private openSnackBar(message: string, action: string): void {
+    this.snackBar.open(message, action, {
+      duration: 5000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+    });
   }
 }

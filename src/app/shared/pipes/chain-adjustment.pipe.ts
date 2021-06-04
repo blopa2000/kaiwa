@@ -5,11 +5,11 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class ChainAdjustmentPipe implements PipeTransform {
   transform(value: unknown, ...args: unknown[]): unknown {
-    const words: String = String(value);
+    const words: string = String(value);
     const argument: number = Number(args[0]);
 
     if (words.length > argument) {
-      const letters: String = words.slice(0, argument);
+      const letters: string = words.slice(0, argument);
       return letters + '...';
     }
     return value;

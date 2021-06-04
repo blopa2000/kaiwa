@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { of, BehaviorSubject, Observable } from 'rxjs';
+import { User, DefaultContact } from '@models/user.model';
+import { of, BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private user = new BehaviorSubject<any>({});
+  private user = new BehaviorSubject<User>({});
   public user$ = this.user.asObservable();
 
-  private userContact = new BehaviorSubject<any>({});
+  private userContact = new BehaviorSubject<DefaultContact | any>({});
   public userContact$ = this.userContact.asObservable();
 
   constructor(private db: AngularFirestore) {}
@@ -26,8 +27,8 @@ export class UserService {
       .set({ firstName, lastName, email, description: 'new to kaiwa :)' });
   }
 
-  getUser(id: string): any {
-    this.db
+  getUser(id: string): Subscription {
+    return this.db
       .collection('users')
       .doc(id)
       .valueChanges()
@@ -36,11 +37,11 @@ export class UserService {
       });
   }
 
-  updateUser(user: any, id: string) {
+  updateUser(user: any, id: string): void {
     this.db.collection('users').doc(id).update(user);
   }
 
-  addContact(id: string, contact: object) {
+  addContact(id: string, contact: object): void {
     this.db.collection('users').doc(id).collection('contacts').add(contact);
   }
 
@@ -55,7 +56,7 @@ export class UserService {
     return of(null);
   }
 
-  validateMyContacts(id: string) {
+  validateMyContacts(id: string): Observable<any> {
     return this.db
       .collection('users')
       .doc(id)
@@ -67,7 +68,7 @@ export class UserService {
     return this.db.collection('users').doc(id).valueChanges();
   }
 
-  setUserContact(id: string, idContact: string) {
+  setUserContact(id: string, idContact: string): void {
     this.db
       .collection('users')
       .doc(id)
@@ -81,10 +82,10 @@ export class UserService {
     idCollectionContact: string,
     idUserContact: string,
     idUser: string
-  ) {
+  ): void {
     this.userContact.next({});
 
-    //remove user from my contacts
+    // remove user from my contacts
     this.db
       .collection('users')
       .doc(idUser)
@@ -110,7 +111,7 @@ export class UserService {
       });
   }
 
-  searchUsers(user: string) {
+  searchUsers(user: string): Observable<any> {
     return this.db
       .collection('users', (ref) =>
         ref

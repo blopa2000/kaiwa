@@ -4,6 +4,7 @@ import {
   OnInit,
   ViewChild,
   DoCheck,
+  OnDestroy,
 } from '@angular/core';
 import { RoomService } from '@services/room/room.service';
 import { UserService } from '@services/user/user.service';
@@ -16,27 +17,30 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import { FormControl, Validators } from '@angular/forms';
+import { User, DefaultContact, Contacts } from '@models/user.model';
+import { Message } from '@models/room.model';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss'],
 })
-export class ChatComponent implements OnInit, DoCheck {
+export class ChatComponent implements OnInit, DoCheck, OnDestroy {
   @ViewChild('containerMessage', { static: false })
   private containerMessage: ElementRef;
 
-  messages = [];
-  count: any = 0;
-  user: any = {};
-  userContact: any = {};
-  listContacts: any[];
-  idRoom: any = '';
-  idUser: string = '';
+  count = 0;
+  view = 'start';
+  idRoom: string;
+  idUser: string;
+  user: User;
+  messages: Message[];
+  userContact: DefaultContact;
+  listContacts: Contacts[];
   messageInput: FormControl;
-  view: string = 'start';
+  messageOnSuscribe: any;
 
-  //icon
+  // icon
   faPaperPlane = faPaperPlane;
   faChevronDown = faChevronDown;
   faArrowLeft = faArrowLeft;
@@ -50,33 +54,44 @@ export class ChatComponent implements OnInit, DoCheck {
   ) {
     this.messageInput = new FormControl('', [Validators.required]);
 
-    this.roomService.message$.subscribe((msg) => {
-      this.messages = msg;
-    });
+    this.messageOnSuscribe = this.roomService.message$.subscribe(
+      (msg: Message[]) => {
+        this.messages = msg;
+      }
+    );
 
-    this.userService.user$.subscribe((user) => {
+    this.userService.user$.subscribe((user: User) => {
       this.user = user;
     });
 
-    this.roomService.ID$.subscribe((id) => {
+    this.roomService.ID$.subscribe((id: string) => {
       this.idRoom = id;
     });
 
-    this.userService.userContact$.subscribe((doc) => {
+    this.userService.userContact$.subscribe((doc: DefaultContact) => {
       this.userContact = doc;
-      this.userService.validateMyContacts(doc.id).subscribe((doc) => {
-        this.listContacts = doc;
-      });
+      this.userService
+        .validateMyContacts(doc.id)
+        .subscribe((contacts: Contacts[]) => {
+          this.listContacts = contacts;
+        });
     });
 
-    this.roomService.view$.subscribe((data) => {
+    this.roomService.view$.subscribe((data: string) => {
       this.view = data;
+    });
+
+    this.roomService.lastMessage$.subscribe((doc) => {
+      // console.log(doc);
+
+      this.count = doc?.countMessage;
+      this.idUser = doc?.idUser;
     });
   }
 
   ngOnInit(): void {}
 
-  ngDoCheck() {
+  ngDoCheck(): void {
     if (window.innerWidth < 950) {
       if (this.view === 'chat') {
         this.el.nativeElement.style.display = 'block';
@@ -91,14 +106,9 @@ export class ChatComponent implements OnInit, DoCheck {
     }
   }
 
-  async handleMessage() {
+  async handleMessage(): Promise<void> {
     if (!this.messageInput.hasError('required')) {
       try {
-        this.roomService.getLastMessage().subscribe((doc: any) => {
-          this.count = doc?.countMessage;
-          this.idUser = doc?.idUser;
-        });
-
         const message = this.messageInput.value;
 
         this.messageInput.reset();
@@ -146,11 +156,11 @@ export class ChatComponent implements OnInit, DoCheck {
     }
   }
 
-  deleteMessage(id: string) {
+  deleteMessage(id: string): void {
     this.roomService.deleteMessage(id);
   }
 
-  changeView(state) {
+  changeView(state: string): void {
     this.roomService.changeView(state);
   }
 
@@ -160,5 +170,14 @@ export class ChatComponent implements OnInit, DoCheck {
       horizontalPosition: 'right',
       verticalPosition: 'top',
     });
+  }
+
+  ngOnDestroy(): void {
+    this.count = 0;
+    this.idRoom = '';
+    this.idUser = '';
+    this.messages = [];
+    this.roomService.clean();
+    this.messageOnSuscribe.unsubscribe();
   }
 }

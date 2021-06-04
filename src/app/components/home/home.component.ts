@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '@services/auth/auth.service';
 import { UserService } from '@services/user/user.service';
 
@@ -7,7 +7,9 @@ import { UserService } from '@services/user/user.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+  verifyUserSub: any;
+  getuserSub: any;
   constructor(
     private authService: AuthService,
     private usersService: UserService
@@ -15,11 +17,16 @@ export class HomeComponent implements OnInit {
     this.getuser();
   }
 
-  getuser(): void {
-    this.authService.verifyUser().subscribe((data) => {
-      this.usersService.getUser(data?.uid);
+  ngOnInit(): void {}
+
+  private getuser(): void {
+    this.verifyUserSub = this.authService.verifyUser().subscribe((data) => {
+      this.getuserSub = this.usersService.getUser(data?.uid);
     });
   }
 
-  ngOnInit(): void {}
+  ngOnDestroy(): void {
+    this.verifyUserSub.unsubscribe();
+    this.getuserSub.unsubscribe();
+  }
 }

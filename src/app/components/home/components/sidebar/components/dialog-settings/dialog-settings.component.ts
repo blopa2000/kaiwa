@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { faCameraRetro } from '@fortawesome/free-solid-svg-icons';
 
 import { UserService } from '@services/user/user.service';
 import { AngularFireStorage } from '@angular/fire/storage';
-
-import { faCameraRetro } from '@fortawesome/free-solid-svg-icons';
+import { User } from '@models/user.model';
 
 @Component({
   selector: 'app-dialog-settings',
@@ -12,13 +12,15 @@ import { faCameraRetro } from '@fortawesome/free-solid-svg-icons';
   styleUrls: ['./dialog-settings.component.scss'],
 })
 export class DialogSettingsComponent implements OnInit {
-  user: any;
-  file: object;
-  filePre: any;
+  user: User;
+  file: ElementRef;
+  filePre: string | ArrayBuffer;
   urlImage: string;
   form: FormGroup;
+  spinner = false;
+
+  // icon
   faCameraRetro = faCameraRetro;
-  spinner: boolean = false;
 
   constructor(
     private userService: UserService,
@@ -33,7 +35,7 @@ export class DialogSettingsComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  async update(e: Event) {
+  async update(e: Event): Promise<void> {
     e.preventDefault();
 
     if (this.form.valid) {
@@ -61,10 +63,10 @@ export class DialogSettingsComponent implements OnInit {
     }
   }
 
-  onUploadImg(e: any) {
+  onUploadImg(e: Event | EventTarget | any): void {
     this.file = e.target.files[0];
 
-    let reader = new FileReader();
+    const reader = new FileReader();
 
     reader.readAsDataURL(e.target.files[0]);
 
@@ -73,7 +75,7 @@ export class DialogSettingsComponent implements OnInit {
     };
   }
 
-  private buildForm() {
+  private buildForm(): void {
     this.form = this.formBuilder.group({
       firstName: [
         this.user.firstName,

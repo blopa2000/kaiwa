@@ -1,15 +1,19 @@
+import { Message, LastMessage } from '@models/room.model';
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoomService {
-  id = '';
-  private message = new BehaviorSubject<any[]>([]);
+  id: string;
+  private message = new BehaviorSubject<Message[]>([]);
   public message$ = this.message.asObservable();
+
+  private lastMessage = new BehaviorSubject<LastMessage>(null);
+  public lastMessage$ = this.lastMessage.asObservable();
 
   private ID = new BehaviorSubject<string>('');
   public ID$ = this.ID.asObservable();
@@ -19,15 +23,15 @@ export class RoomService {
 
   constructor(private db: AngularFirestore) {}
 
-  createRoom(room: object) {
+  createRoom(room: object): Promise<DocumentReference> {
     return this.db.collection('room').add(room);
   }
 
-  getRoom(id: string): any {
+  getRoom(id: string): Observable<unknown> {
     return this.db.collection('room').doc(id).valueChanges();
   }
 
-  deleteRoom() {
+  deleteRoom(): void {
     this.ID.next('');
     this.message.next([]);
 
@@ -44,7 +48,7 @@ export class RoomService {
     this.db.collection('room').doc(this.id).delete();
   }
 
-  getMessage(id: string) {
+  getMessage(id: string): Subscription {
     this.id = id;
     this.ID.next(id);
     this.view.next('chat');
@@ -77,14 +81,14 @@ export class RoomService {
       });
   }
 
-  messageRead(id: string) {
+  messageRead(id: string): void {
     this.db.collection('room').doc(id).update({
       messageSeen: true,
       countMessage: 0,
     });
   }
 
-  newMessage(msg: any) {
+  newMessage(msg: any): Promise<DocumentReference> {
     return this.db
       .collection('room')
       .doc(this.id)
@@ -92,12 +96,18 @@ export class RoomService {
       .add(msg);
   }
 
-  updateLastMessage(msg: any) {
+  updateLastMessage(msg: any): Promise<void> {
     return this.db.collection('room').doc(this.id).update(msg);
   }
 
-  getLastMessage() {
-    return this.db.collection('room').doc(this.id).valueChanges();
+  getLastMessage(id: string): Subscription {
+    return this.db
+      .collection('room')
+      .doc(id)
+      .valueChanges()
+      .subscribe((doc: LastMessage) => {
+        this.lastMessage.next(doc);
+      });
   }
 
   cleanChat(): Subscription {
@@ -115,7 +125,7 @@ export class RoomService {
       });
   }
 
-  deleteMessage(idMsg: string) {
+  deleteMessage(idMsg: string): void {
     this.db
       .collection('room')
       .doc(this.id)
@@ -124,7 +134,12 @@ export class RoomService {
       .delete();
   }
 
-  changeView(state: string) {
+  changeView(state: string): void {
     this.view.next(state);
+  }
+  clean(): void {
+    this.message.next([]);
+    this.ID.next('');
+    this.lastMessage.next(null);
   }
 }
