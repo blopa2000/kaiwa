@@ -1,4 +1,4 @@
-import { Component, DoCheck, ElementRef } from '@angular/core';
+import { Component, DoCheck, ElementRef, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
@@ -14,10 +14,12 @@ import { DefaultContact, User } from '@models/user.model';
   templateUrl: './contact-user-view.component.html',
   styleUrls: ['./contact-user-view.component.scss'],
 })
-export class ContactUserViewComponent implements DoCheck {
+export class ContactUserViewComponent implements DoCheck, OnDestroy {
   user: DefaultContact;
   view: string;
   idUser: string;
+
+  userContactSub: any;
 
   // icon
   faArrowLeft = faArrowLeft;
@@ -29,13 +31,18 @@ export class ContactUserViewComponent implements DoCheck {
     private snackBar: MatSnackBar,
     private el: ElementRef
   ) {
-    this.userService.userContact$.subscribe((doc: DefaultContact) => {
-      this.user = doc;
-    });
+    this.userContactSub = this.userService.userContact$.subscribe(
+      (doc: DefaultContact) => {
+        this.user = doc;
+      }
+    );
 
-    this.userService.user$.subscribe((doc: User) => {
-      this.idUser = doc.id;
-    });
+    this.userService.user$.subscribe(
+      (doc: User) => {
+        this.idUser = doc.id;
+      },
+      (error) => console.log(error)
+    );
 
     this.roomService.view$.subscribe((data: string) => {
       this.view = data;
@@ -93,5 +100,11 @@ export class ContactUserViewComponent implements DoCheck {
       horizontalPosition: 'right',
       verticalPosition: 'top',
     });
+  }
+
+  ngOnDestroy() {
+    this.user = {};
+    this.userService.clean();
+    this.userContactSub.unsubscribe();
   }
 }

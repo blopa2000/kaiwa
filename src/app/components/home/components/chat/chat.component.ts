@@ -38,7 +38,7 @@ export class ChatComponent implements OnInit, DoCheck, OnDestroy {
   userContact: DefaultContact;
   listContacts: Contacts[];
   messageInput: FormControl;
-  messageOnSuscribe: any;
+  messageSub: any;
 
   // icon
   faPaperPlane = faPaperPlane;
@@ -54,11 +54,9 @@ export class ChatComponent implements OnInit, DoCheck, OnDestroy {
   ) {
     this.messageInput = new FormControl('', [Validators.required]);
 
-    this.messageOnSuscribe = this.roomService.message$.subscribe(
-      (msg: Message[]) => {
-        this.messages = msg;
-      }
-    );
+    this.messageSub = this.roomService.message$.subscribe((msg: Message[]) => {
+      this.messages = msg;
+    });
 
     this.userService.user$.subscribe((user: User) => {
       this.user = user;
@@ -178,6 +176,6 @@ export class ChatComponent implements OnInit, DoCheck, OnDestroy {
     this.idUser = '';
     this.messages = [];
     this.roomService.clean();
-    this.messageOnSuscribe.unsubscribe();
+    this.messageSub.unsubscribe();
   }
 }

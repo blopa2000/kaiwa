@@ -37,6 +37,7 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
   getContactsSub: any;
   getMessageSub: any;
   getLastMessageSub: any;
+  userContactSub: any;
 
   // icon
   faEllipsisV = faEllipsisV;
@@ -144,7 +145,7 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
     this.getMessageSub = this.roomService.getMessage(id);
     this.getLastMessageSub = this.roomService.getLastMessage(id);
 
-    this.userService.setUserContact(userID, contactsID);
+    this.userContactSub = this.userService.setUserContact(userID, contactsID);
   }
 
   exit(): void {
@@ -164,9 +165,10 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
     this.getRoom.unsubscribe();
     this.getUserContact.unsubscribe();
     this.getContactsSub.unsubscribe();
-    this.getLastMessageSub.unsubscribe();
     if (this.activeChat) {
+      this.getLastMessageSub.unsubscribe();
       this.getMessageSub.unsubscribe();
+      this.userContactSub.unsubscribe();
     }
   }
 }

@@ -1,8 +1,8 @@
 import { Message, LastMessage } from '@models/room.model';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subscription, throwError } from 'rxjs';
+import { catchError, map, retry } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -60,6 +60,10 @@ export class RoomService {
       )
       .snapshotChanges()
       .pipe(
+        retry(3),
+        catchError((error) => {
+          return throwError('error when fetching messages');
+        }),
         map((messages) => {
           const chats = [];
           for (const message of messages) {
@@ -137,6 +141,7 @@ export class RoomService {
   changeView(state: string): void {
     this.view.next(state);
   }
+
   clean(): void {
     this.message.next([]);
     this.ID.next('');

@@ -1,9 +1,11 @@
+@import "styles/vars";
+
 :host {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: #5ba2ff;
+  background: $background;
 
   &::ng-deep.mat-card {
     box-shadow: none;
@@ -21,6 +23,6 @@
 
   & p {
     font-size: x-large;
-    color: #5ba2ff;
+    color: $primary;
   }
 }

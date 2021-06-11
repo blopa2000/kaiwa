@@ -68,8 +68,8 @@ export class UserService {
     return this.db.collection('users').doc(id).valueChanges();
   }
 
-  setUserContact(id: string, idContact: string): void {
-    this.db
+  setUserContact(id: string, idContact: string): Subscription {
+    return this.db
       .collection('users')
       .doc(id)
       .valueChanges()
@@ -119,5 +119,10 @@ export class UserService {
           .where('firstName', '<=', user + '\uf8ff')
       )
       .get();
+  }
+
+  clean(): void {
+    this.user.next({});
+    this.userContact.next({});
   }
 }

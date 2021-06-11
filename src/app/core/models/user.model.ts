@@ -26,14 +26,14 @@ export interface Contact {
 }
 
 export interface DefaultContact {
-  doc: {
+  doc?: {
     firstName?: string;
     email?: string;
     avatar?: string;
     lastName?: string;
     description?: string;
   };
-  id: string;
+  id?: string;
   idContact?: string;
 }
 
