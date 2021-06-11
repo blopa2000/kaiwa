@@ -80,8 +80,6 @@ export class ChatComponent implements OnInit, DoCheck, OnDestroy {
     });
 
     this.roomService.lastMessage$.subscribe((doc) => {
-      // console.log(doc);
-
       this.count = doc?.countMessage;
       this.idUser = doc?.idUser;
     });

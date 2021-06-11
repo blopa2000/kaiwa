@@ -165,7 +165,6 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
 
   ngOnDestroy(): void {
     this.activeContact = false;
-    this.activeChat = false;
     this.getRoom.unsubscribe();
     this.getUserContact.unsubscribe();
     this.getContactsSub.unsubscribe();
