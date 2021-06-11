@@ -102,7 +102,7 @@ export class ContactUserViewComponent implements DoCheck, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.user = {};
     this.userService.clean();
     this.userContactSub.unsubscribe();
