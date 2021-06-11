@@ -79,13 +79,15 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
   getContacts(): void {
     this.getContactsSub = this.userService
       .getContacts(this.user.id)
-      .subscribe((contacts: any) => {
+      .subscribe((contacts: any[]) => {
         this.listUserItem = [];
+
         if (this.activeContact) {
-          this.getRoom.unsubscribe();
-          this.getUserContact.unsubscribe();
+          this.getRoom?.unsubscribe();
+          this.getUserContact?.unsubscribe();
         }
-        if (contacts !== null) {
+
+        if (contacts?.length !== undefined && contacts?.length >= 0) {
           this.activeContact = true;
 
           for (let index = 0; index < contacts.length; index++) {
@@ -162,6 +164,8 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.activeContact = false;
+    this.activeChat = false;
     this.getRoom.unsubscribe();
     this.getUserContact.unsubscribe();
     this.getContactsSub.unsubscribe();
