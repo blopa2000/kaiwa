@@ -8,6 +8,8 @@ import { DialogContactComponent } from './../dialog-contact/dialog-contact.compo
 import { UserService } from '@services/user/user.service';
 import { RoomService } from '@services/room/room.service';
 import { DefaultContact, User } from '@models/user.model';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-contact-user-view',
@@ -15,11 +17,11 @@ import { DefaultContact, User } from '@models/user.model';
   styleUrls: ['./contact-user-view.component.scss'],
 })
 export class ContactUserViewComponent implements DoCheck, OnDestroy {
+  private unsubscribe$ = new Subject<void>();
+
   user: DefaultContact;
   view: string;
   idUser: string;
-
-  userContactSub: any;
 
   // icon
   faArrowLeft = faArrowLeft;
@@ -31,22 +33,24 @@ export class ContactUserViewComponent implements DoCheck, OnDestroy {
     private snackBar: MatSnackBar,
     private el: ElementRef
   ) {
-    this.userContactSub = this.userService.userContact$.subscribe(
-      (doc: DefaultContact) => {
+    this.userService.userContact$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((doc: DefaultContact) => {
         this.user = doc;
-      }
-    );
+      });
 
-    this.userService.user$.subscribe(
+    this.userService.user$.pipe(takeUntil(this.unsubscribe$)).subscribe(
       (doc: User) => {
         this.idUser = doc.id;
       },
       (error) => console.log(error)
     );
 
-    this.roomService.view$.subscribe((data: string) => {
-      this.view = data;
-    });
+    this.roomService.view$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((data: string) => {
+        this.view = data;
+      });
   }
 
   ngDoCheck(): void {
@@ -105,6 +109,7 @@ export class ContactUserViewComponent implements DoCheck, OnDestroy {
   ngOnDestroy(): void {
     this.user = {};
     this.userService.clean();
-    this.userContactSub.unsubscribe();
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

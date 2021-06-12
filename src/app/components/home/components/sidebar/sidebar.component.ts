@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { Subject } from 'rxjs';
 
 import { UserService } from '@services/user/user.service';
 import { RoomService } from '@services/room/room.service';
@@ -17,6 +18,7 @@ import { AuthService } from '@services/auth/auth.service';
 import { User, Contact } from '@models/user.model';
 
 import { DialogSettingsComponent } from './components/dialog-settings/dialog-settings.component';
+import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
@@ -26,18 +28,16 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
   @ViewChild('avatar', { static: true }) avatar: ElementRef;
   @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;
 
+  private unsubscribe$ = new Subject<void>();
+
   listUserItem: Contact[];
   user: User;
-
   activeChat = false;
   activeContact = false;
   view: string;
-  getRoom: any;
-  getUserContact: any;
-  getContactsSub: any;
+  getRoomSub: any;
+  getUserContactSub: any;
   getMessageSub: any;
-  getLastMessageSub: any;
-  userContactSub: any;
 
   // icon
   faEllipsisV = faEllipsisV;
@@ -50,14 +50,18 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
     private el: ElementRef,
     public dialog: MatDialog
   ) {
-    this.userService.user$.subscribe((user) => {
-      this.user = user;
-      this.getContacts();
-    });
+    this.userService.user$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((user) => {
+        this.user = user;
+        this.getContacts();
+      });
 
-    this.roomService.view$.subscribe((data) => {
-      this.view = data;
-    });
+    this.roomService.view$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((data) => {
+        this.view = data;
+      });
   }
 
   ngOnInit(): void {}
@@ -77,21 +81,22 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   getContacts(): void {
-    this.getContactsSub = this.userService
+    this.userService
       .getContacts(this.user.id)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((contacts: any[]) => {
         this.listUserItem = [];
 
         if (this.activeContact) {
-          this.getRoom?.unsubscribe();
-          this.getUserContact?.unsubscribe();
+          this.getUserContactSub?.unsubscribe();
+          this.getRoomSub?.unsubscribe();
         }
 
         if (contacts?.length !== undefined && contacts?.length >= 0) {
           this.activeContact = true;
 
           for (let index = 0; index < contacts.length; index++) {
-            this.getUserContact = this.userService
+            this.getUserContactSub = this.userService
               .getUserContact(contacts[index].payload.doc.data().user)
               .subscribe((user: any) => {
                 if (user !== undefined) {
@@ -104,7 +109,7 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
                 }
               });
 
-            this.getRoom = this.roomService
+            this.getRoomSub = this.roomService
               .getRoom(contacts[index].payload.doc.data().room)
               .subscribe((room: any) => {
                 if (room !== undefined) {
@@ -143,11 +148,10 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
     if (this.user.id !== idUser) {
       this.roomService.messageRead(id);
     }
-
     this.getMessageSub = this.roomService.getMessage(id);
-    this.getLastMessageSub = this.roomService.getLastMessage(id);
 
-    this.userContactSub = this.userService.setUserContact(userID, contactsID);
+    this.roomService.getLastMessage(id);
+    this.userService.setUserContact(userID, contactsID);
   }
 
   exit(): void {
@@ -165,13 +169,12 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
 
   ngOnDestroy(): void {
     this.activeContact = false;
-    this.getRoom.unsubscribe();
-    this.getUserContact.unsubscribe();
-    this.getContactsSub.unsubscribe();
+    this.getRoomSub.unsubscribe();
+    this.getUserContactSub.unsubscribe();
     if (this.activeChat) {
-      this.getLastMessageSub.unsubscribe();
       this.getMessageSub.unsubscribe();
-      this.userContactSub.unsubscribe();
     }
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { User, DefaultContact } from '@models/user.model';
-import { of, BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { of, BehaviorSubject, Observable, Subscription, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
+  private unsubscribe$ = new Subject<void>();
+
   private user = new BehaviorSubject<User>({});
   public user$ = this.user.asObservable();
 
@@ -32,6 +35,7 @@ export class UserService {
       .collection('users')
       .doc(id)
       .valueChanges()
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((doc: any) => {
         this.user.next({ ...doc, id });
       });
@@ -68,11 +72,12 @@ export class UserService {
     return this.db.collection('users').doc(id).valueChanges();
   }
 
-  setUserContact(id: string, idContact: string): Subscription {
-    return this.db
+  setUserContact(id: string, idContact: string): void {
+    this.db
       .collection('users')
       .doc(id)
       .valueChanges()
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((doc) => {
         this.userContact.next({ doc, idContact, id });
       });
@@ -99,6 +104,7 @@ export class UserService {
       .doc(idUserContact)
       .collection('contacts', (ref) => ref.where('user', '==', idUser))
       .get()
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((doc) => {
         if (doc.docs[0]?.id) {
           this.db
@@ -124,5 +130,7 @@ export class UserService {
   clean(): void {
     this.user.next({});
     this.userContact.next({});
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

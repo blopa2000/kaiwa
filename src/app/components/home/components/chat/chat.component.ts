@@ -19,6 +19,8 @@ import {
 import { FormControl, Validators } from '@angular/forms';
 import { User, DefaultContact, Contacts } from '@models/user.model';
 import { Message } from '@models/room.model';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-chat',
@@ -29,6 +31,8 @@ export class ChatComponent implements OnInit, DoCheck, OnDestroy {
   @ViewChild('containerMessage', { static: false })
   private containerMessage: ElementRef;
 
+  private unsubscribe$ = new Subject<void>();
+
   count = 0;
   view = 'start';
   idRoom: string;
@@ -38,7 +42,6 @@ export class ChatComponent implements OnInit, DoCheck, OnDestroy {
   userContact: DefaultContact;
   listContacts: Contacts[];
   messageInput: FormControl;
-  messageSub: any;
 
   // icon
   faPaperPlane = faPaperPlane;
@@ -54,35 +57,47 @@ export class ChatComponent implements OnInit, DoCheck, OnDestroy {
   ) {
     this.messageInput = new FormControl('', [Validators.required]);
 
-    this.messageSub = this.roomService.message$.subscribe((msg: Message[]) => {
-      this.messages = msg;
-    });
+    this.roomService.message$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((msg: Message[]) => {
+        this.messages = msg;
+      });
 
-    this.userService.user$.subscribe((user: User) => {
-      this.user = user;
-    });
+    this.userService.user$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((user: User) => {
+        this.user = user;
+      });
 
-    this.roomService.ID$.subscribe((id: string) => {
-      this.idRoom = id;
-    });
+    this.roomService.ID$.pipe(takeUntil(this.unsubscribe$)).subscribe(
+      (id: string) => {
+        this.idRoom = id;
+      }
+    );
 
-    this.userService.userContact$.subscribe((doc: DefaultContact) => {
-      this.userContact = doc;
-      this.userService
-        .validateMyContacts(doc.id)
-        .subscribe((contacts: Contacts[]) => {
-          this.listContacts = contacts;
-        });
-    });
+    this.userService.userContact$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((doc: DefaultContact) => {
+        this.userContact = doc;
+        this.userService
+          .validateMyContacts(doc.id)
+          .subscribe((contacts: Contacts[]) => {
+            this.listContacts = contacts;
+          });
+      });
 
-    this.roomService.view$.subscribe((data: string) => {
-      this.view = data;
-    });
+    this.roomService.view$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((data: string) => {
+        this.view = data;
+      });
 
-    this.roomService.lastMessage$.subscribe((doc) => {
-      this.count = doc?.countMessage;
-      this.idUser = doc?.idUser;
-    });
+    this.roomService.lastMessage$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((doc) => {
+        this.count = doc?.countMessage;
+        this.idUser = doc?.idUser;
+      });
   }
 
   ngOnInit(): void {}
@@ -169,11 +184,10 @@ export class ChatComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.count = 0;
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
     this.idRoom = '';
-    this.idUser = '';
     this.messages = [];
     this.roomService.clean();
-    this.messageSub.unsubscribe();
   }
 }

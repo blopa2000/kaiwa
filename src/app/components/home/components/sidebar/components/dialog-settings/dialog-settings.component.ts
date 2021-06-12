@@ -1,17 +1,21 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { faCameraRetro } from '@fortawesome/free-solid-svg-icons';
 
 import { UserService } from '@services/user/user.service';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { User } from '@models/user.model';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dialog-settings',
   templateUrl: './dialog-settings.component.html',
   styleUrls: ['./dialog-settings.component.scss'],
 })
-export class DialogSettingsComponent implements OnInit {
+export class DialogSettingsComponent implements OnInit, OnDestroy {
+  private unsubscribe$ = new Subject<void>();
+
   user: User;
   file: ElementRef;
   filePre: string | ArrayBuffer;
@@ -27,9 +31,11 @@ export class DialogSettingsComponent implements OnInit {
     private angularFireStorage: AngularFireStorage,
     private formBuilder: FormBuilder
   ) {
-    this.userService.user$.subscribe((doc) => {
-      this.user = doc;
-    });
+    this.userService.user$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((doc) => {
+        this.user = doc;
+      });
     this.buildForm();
   }
 
@@ -87,5 +93,10 @@ export class DialogSettingsComponent implements OnInit {
       ],
       description: [this.user.description, [Validators.maxLength(50)]],
     });
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

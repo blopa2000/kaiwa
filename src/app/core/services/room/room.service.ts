@@ -1,14 +1,22 @@
 import { Message, LastMessage } from '@models/room.model';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
-import { BehaviorSubject, Observable, Subscription, throwError } from 'rxjs';
-import { catchError, map, retry } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  Subscription,
+  throwError,
+} from 'rxjs';
+import { catchError, map, retry, takeUntil } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoomService {
   id: string;
+  private unsubscribe$ = new Subject<void>();
+
   private message = new BehaviorSubject<Message[]>([]);
   public message$ = this.message.asObservable();
 
@@ -40,6 +48,7 @@ export class RoomService {
       .doc(this.id)
       .collection('messages')
       .snapshotChanges()
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((doc) => {
         for (const data of doc) {
           data.payload.doc.ref.delete();
@@ -104,11 +113,12 @@ export class RoomService {
     return this.db.collection('room').doc(this.id).update(msg);
   }
 
-  getLastMessage(id: string): Subscription {
-    return this.db
+  getLastMessage(id: string): void {
+    this.db
       .collection('room')
       .doc(id)
       .valueChanges()
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((doc: LastMessage) => {
         this.lastMessage.next(doc);
       });
@@ -146,5 +156,7 @@ export class RoomService {
     this.message.next([]);
     this.ID.next('');
     this.lastMessage.next(null);
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }
