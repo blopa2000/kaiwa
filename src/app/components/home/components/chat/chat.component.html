@@ -27,6 +27,9 @@
   </mat-toolbar>
 
   <div class="container-message" #containerMessage>
+    <div *ngIf="messages?.length === 0" class="msg-default">
+      No messages, why don't you send one?
+    </div>
     <div *ngFor="let msg of messages" class="content-msg">
       <span *ngIf="msg?.idUser !== user?.id" class="msg"> </span>
       <div
