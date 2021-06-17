@@ -75,7 +75,6 @@ export class InputSearchComponent implements OnInit, OnDestroy {
         };
         this.userService.addContact(this.idUser, contact);
         this.search.reset();
-        window.location.reload();
       });
     } else {
       this.openSnackBar('Error cannot create a chat room', 'dismiss');
