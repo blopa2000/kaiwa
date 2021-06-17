@@ -44,7 +44,12 @@ export class SignUpComponent implements OnInit {
         .signUp(email, password)
         .then((credentials: any) => {
           const id = credentials.user.uid;
-          this.usersService.createUser(firstName, lastName, email, id);
+          this.usersService.createUser(
+            firstName.toLowerCase(),
+            lastName.toLowerCase(),
+            email,
+            id
+          );
           this.router.navigate(['/sign-in']);
         })
         .catch((response: any) => {

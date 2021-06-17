@@ -39,7 +39,7 @@ export class RoomService {
     return this.db.collection('room').doc(id).valueChanges();
   }
 
-  deleteRoom(): void {
+  deleteRoom(): Promise<void> {
     this.ID.next('');
     this.message.next([]);
 
@@ -54,7 +54,7 @@ export class RoomService {
           data.payload.doc.ref.delete();
         }
       });
-    this.db.collection('room').doc(this.id).delete();
+    return this.db.collection('room').doc(this.id).delete();
   }
 
   getMessage(id: string): Subscription {

@@ -29,6 +29,7 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
   @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;
 
   private unsubscribe$ = new Subject<void>();
+  private roomAndContacts$ = new Subject<void>();
 
   listUserItem: Contact[];
   user: User;
@@ -88,16 +89,17 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
         this.listUserItem = [];
 
         if (this.activeContact) {
-          this.getUserContactSub?.unsubscribe();
-          this.getRoomSub?.unsubscribe();
+          this.roomAndContacts$.next();
+          this.roomAndContacts$.complete();
         }
 
         if (contacts?.length !== undefined && contacts?.length >= 0) {
           this.activeContact = true;
 
           for (let index = 0; index < contacts.length; index++) {
-            this.getUserContactSub = this.userService
+            this.userService
               .getUserContact(contacts[index].payload.doc.data().user)
+              .pipe(takeUntil(this.roomAndContacts$))
               .subscribe((user: any) => {
                 if (user !== undefined) {
                   this.listUserItem[index] = {
@@ -109,8 +111,9 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
                 }
               });
 
-            this.getRoomSub = this.roomService
+            this.roomService
               .getRoom(contacts[index].payload.doc.data().room)
+              .pipe(takeUntil(this.roomAndContacts$))
               .subscribe((room: any) => {
                 if (room !== undefined) {
                   this.listUserItem[index] = {
@@ -169,8 +172,8 @@ export class SidebarComponent implements OnInit, DoCheck, OnDestroy {
 
   ngOnDestroy(): void {
     this.activeContact = false;
-    this.getRoomSub.unsubscribe();
-    this.getUserContactSub.unsubscribe();
+    this.roomAndContacts$.next();
+    this.roomAndContacts$.complete();
     if (this.activeChat) {
       this.getMessageSub.unsubscribe();
     }
